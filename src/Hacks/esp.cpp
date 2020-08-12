@@ -843,18 +843,18 @@ static void DrawPlayerText( C_BasePlayer* player, C_BasePlayer* localplayer, int
 		lineNum++;
 	}
 	//if (player->GetIndex() == Resolver::indx){
-	if (player->GetEyeAngles()->x < 65.f || player->GetEyeAngles()->x > 90.f && Settings::Resolver::resolveAll && !(Entity::IsTeamMate(player, localplayer)) ){
-	Vector2D rankSize = Draw::GetTextSize( "Resolving: Legit AA", esp_font );
-        Draw::AddText( ( x + ( w / 2 ) - ( rankSize.x / 2 ) ),( y - ( textSize.y * lineNum ) - nameOffset ), "Resolving: Legit AA", Entity::IsTeamMate(player, localplayer) ? Settings::ESP::allyInfoColor.Color() : Settings::ESP::enemyInfoColor.Color() );
-	}
-        else if (Settings::Resolver::resolveAll && !(Entity::IsTeamMate(player, localplayer))){
-        Vector2D rankSize = Draw::GetTextSize( "Resolving: Rage AA", esp_font );
-        Draw::AddText( ( x + ( w / 2 ) - ( rankSize.x / 2 ) ),( y - ( textSize.y * lineNum ) - nameOffset ), "Resolving: Rage AA", Entity::IsTeamMate(player, localplayer) ? Settings::ESP::allyInfoColor.Color() : Settings::ESP::enemyInfoColor.Color() );
-        }
-	else if (Settings::Resolver::manual && !(Entity::IsTeamMate(player, localplayer))){
-	Vector2D rankSize = Draw::GetTextSize( "Manual Resolver", esp_font );
-        Draw::AddText( ( x + ( w / 2 ) - ( rankSize.x / 2 ) ),( y - ( textSize.y * lineNum ) - nameOffset ), "Manual Resolver", Entity::IsTeamMate(player, localplayer) ? Settings::ESP::allyInfoColor.Color() : Settings::ESP::enemyInfoColor.Color() );	
-	}
+	//if (player->GetEyeAngles()->x < 65.f || player->GetEyeAngles()->x > 90.f && Settings::Resolver::resolveAll && !(Entity::IsTeamMate(player, localplayer)) ){
+	//Vector2D rankSize = Draw::GetTextSize( "Resolving: Legit AA", esp_font );
+        //Draw::AddText( ( x + ( w / 2 ) - ( rankSize.x / 2 ) ),( y - ( textSize.y * lineNum ) - nameOffset ), "Resolving: Legit AA", Entity::IsTeamMate(player, localplayer) ? Settings::ESP::allyInfoColor.Color() : Settings::ESP::enemyInfoColor.Color() );
+	//}
+        //else if (Settings::Resolver::resolveAll && !(Entity::IsTeamMate(player, localplayer))){
+        //Vector2D rankSize = Draw::GetTextSize( "Resolving: Rage AA", esp_font );
+        //Draw::AddText( ( x + ( w / 2 ) - ( rankSize.x / 2 ) ),( y - ( textSize.y * lineNum ) - nameOffset ), "Resolving: Rage AA", Entity::IsTeamMate(player, localplayer) ? Settings::ESP::allyInfoColor.Color() : Settings::ESP::enemyInfoColor.Color() );
+        //}
+	//else if (Settings::Resolver::manual && !(Entity::IsTeamMate(player, localplayer))){
+	//Vector2D rankSize = Draw::GetTextSize( "Manual Resolver", esp_font );
+        //Draw::AddText( ( x + ( w / 2 ) - ( rankSize.x / 2 ) ),( y - ( textSize.y * lineNum ) - nameOffset ), "Manual Resolver", Entity::IsTeamMate(player, localplayer) ? Settings::ESP::allyInfoColor.Color() : Settings::ESP::enemyInfoColor.Color() );	
+	//}
 	//}
 	// draw steamid
 	if ( Settings::ESP::Info::steamId ) {
@@ -891,7 +891,8 @@ static void DrawPlayerText( C_BasePlayer* player, C_BasePlayer* localplayer, int
 	// weapon
 	C_BaseCombatWeapon* activeWeapon = ( C_BaseCombatWeapon* ) entityList->GetClientEntityFromHandle( player->GetActiveWeapon() );
 	if ( Settings::ESP::Info::weapon && activeWeapon ) {
-		//std::string modelName = Util::Items::GetItemDisplayName( *activeWeapon->GetItemDefinitionIndex() );
+		auto activeeWeapon =  *activeWeapon->GetItemDefinitionIndex();
+		std::string modelName;
 		int offset = ( int ) ( Settings::ESP::Bars::type == BarType::HORIZONTAL ||
 							   Settings::ESP::Bars::type == BarType::INTERWEBZ ? boxSpacing + barsSpacing.y + 1 : 0 );
 
@@ -900,138 +901,133 @@ static void DrawPlayerText( C_BasePlayer* player, C_BasePlayer* localplayer, int
 		//Vector2D weaponTextSize = Draw::GetTextSize( modelName.c_str(), esp_font );
 		//Draw::AddText( ( x + ( w / 2 ) - ( weaponTextSize.x / 2 ) ), y + h + offset, modelName.c_str(), Entity::IsTeamMate(player, localplayer) ? Settings::ESP::allyInfoColor.Color() : Settings::ESP::enemyInfoColor.Color() );
 
-		switch (activeWeapon) {
-		case ItemDefinitionIndex::WEAPON_KNIFE_T:
+		if (activeeWeapon == ItemDefinitionIndex::WEAPON_KNIFE_T)
 			 modelName =  ("[");
-			break;
-		case ItemDefinitionIndex::WEAPON_DEAGLE:
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_DEAGLE)
 			 modelName =  ("A");
-			break;
-		case ItemDefinitionIndex::WEAPON_AUG:
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_AUG)
 			 modelName =  ("U");
-			break;
-		case ItemDefinitionIndex::WEAPON_G3SG1:
+			
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_G3SG1)
 			 modelName =  ("X");
-			break;
-		case ItemDefinitionIndex::WEAPON_MAC10:
+			
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_MAC10)
 			 modelName =  ("K");
-			break;
-		case ItemDefinitionIndex::WEAPON_P90:
+			
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_P90)
 			 modelName =  ("P");
-			break;
-		case ItemDefinitionIndex::WEAPON_SSG08:
+			
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_SSG08)
 			 modelName =  ("a");
-        break;
-		case ItemDefinitionIndex::WEAPON_SCAR20:
+        
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_SCAR20)
 			 modelName =  ("Y");
-        break;
-		case ItemDefinitionIndex::WEAPON_UMP45:
+        
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_UMP45)
 			 modelName =  ("L");
-        break;
-		case ItemDefinitionIndex::WEAPON_ELITE:
+        
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_ELITE)
 			 modelName =  ("B");
-        break;
-		case ItemDefinitionIndex::WEAPON_FAMAS:
+        
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_FAMAS)
 			 modelName =  ("R");
-        break;
-		case ItemDefinitionIndex::WEAPON_FIVESEVEN:
+        
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_FIVESEVEN)
 			 modelName =  ("C");
-        break;
-		case ItemDefinitionIndex::WEAPON_GALILAR:
+        
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_GALILAR)
 			 modelName =  ("Q");
-        break;
-		case ItemDefinitionIndex::WEAPON_M4A1_SILENCER:
+        
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_M4A1_SILENCER)
 			 modelName =  ("T");
-        break;
-		case ItemDefinitionIndex::WEAPON_M4A1:
+        
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_M4A1)
 			 modelName =  ("S");
-        break;
-		case ItemDefinitionIndex::WEAPON_P250:
+        
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_P250)
 			 modelName =  ("F");
-        break;
-		case ItemDefinitionIndex::WEAPON_M249:
+        
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_M249)
 			 modelName =  ("g");
-        break;
-		case ItemDefinitionIndex::WEAPON_XM1014:
+        
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_XM1014)
 			 modelName =  ("b");
-        break;
-		case ItemDefinitionIndex::WEAPON_GLOCK:
+        
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_GLOCK)
 			 modelName =  ("D");
-        break;
-		case ItemDefinitionIndex::WEAPON_USP_SILENCER:
+        
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_USP_SILENCER)
 			 modelName =  ("G");
-        break;
-		case ItemDefinitionIndex::WEAPON_HKP2000:
+        
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_HKP2000)
 			 modelName =  ("E");
-        break;
-		case ItemDefinitionIndex::WEAPON_AK47:
+        
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_AK47)
 			 modelName =  ("W");
-        break;
-		case ItemDefinitionIndex::WEAPON_AWP:
+        
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_AWP)
 			 modelName =  ("Z");
-        break;
-		case ItemDefinitionIndex::WEAPON_BIZON:
+        
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_BIZON)
 			 modelName =  ("M");
-        break;
-		case ItemDefinitionIndex::WEAPON_MAG7:
+        
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_MAG7)
 			 modelName =  ("d");
-        break;
-		case ItemDefinitionIndex::WEAPON_NEGEV:
+        
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_NEGEV)
 			 modelName =  ("f");
-        break;
-		case ItemDefinitionIndex::WEAPON_SAWEDOFF:
+        
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_SAWEDOFF)
 			 modelName =  ("c");
-        break;
-		case ItemDefinitionIndex::WEAPON_TEC9:
+        
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_TEC9)
 			 modelName =  ("H");
-        break;
-		case ItemDefinitionIndex::WEAPON_TASER:
+        
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_TASER)
 			 modelName =  ("h");
-        break;
-		case ItemDefinitionIndex::WEAPON_NOVA:
+        
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_NOVA)
 			 modelName =  ("e");
-        break;
-		case ItemDefinitionIndex::WEAPON_CZ75A:
+        
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_CZ75A)
 			 modelName =  ("I");
-		case ItemDefinitionIndex::WEAPON_SG556:
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_SG556)
 			 modelName =  ("V");
-        break;
-		case ItemDefinitionIndex::WEAPON_REVOLVER:
+        
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_REVOLVER)
 			 modelName =  ("J");
-        break;
-		case ItemDefinitionIndex::WEAPON_MP7:
+        
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_MP7)
 			 modelName =  ("N");
-        break;
-		case ItemDefinitionIndex::WEAPON_MP9:
+        
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_MP9)
 			 modelName =  ("O");
-        break;
-		case ItemDefinitionIndex::WEAPON_MP5:
+        
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_MP5)
 			 modelName =  ("L");
-        break;
-		case ItemDefinitionIndex::WEAPON_C4:
+        
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_C4)
 			 modelName =  ("o");
-        break;
-		case ItemDefinitionIndex::WEAPON_FRAG_GRENADE:
+        
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_FRAG_GRENADE)
 			 modelName =  ("j");
-        break;
-		case ItemDefinitionIndex::WEAPON_SMOKEGRENADE:
+        
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_SMOKEGRENADE)
 			 modelName =  ("k");
-        break;
-		case ItemDefinitionIndex::WEAPON_MOLOTOV:
+        
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_MOLOTOV)
 			 modelName =  ("l");
-        break;
-		case ItemDefinitionIndex::WEAPON_INCGRENADE:
+        
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_INCGRENADE)
 			 modelName =  ("n");
-        break;
-		case ItemDefinitionIndex::WEAPON_FLASHBANG:
+        
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_FLASHBANG)
 			 modelName =  ("i");
-        break;
-		case ItemDefinitionIndex::WEAPON_DECOY:
+        
+		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_DECOY)
 			 modelName =  ("m");
-        break;
-		}
-                                Vector2D weaponTextSizeF = Draw::GetTextSize(modelName , astrium );
-		Draw::Text( ( x + ( w / 2 ) - ( weaponTextSizeF.x / 2 ) ), y + h + offset, modelName, astrium,Color::FromImColor( Entity::IsTeamMate(player, localplayer) ? Settings::ESP::allyInfoColor.Color() : Settings::ESP::enemyInfoColor.Color()) );
+                                Vector2D weaponTextSizeF = Draw::GetTextSize(modelName.c_str() , astrium );
+		Draw::Text( ( x + ( w / 2 ) - ( weaponTextSizeF.x / 2 ) ), y + h + offset, modelName.c_str(), astrium,Color::FromImColor( Entity::IsTeamMate(player, localplayer) ? Settings::ESP::allyInfoColor.Color() : Settings::ESP::enemyInfoColor.Color()) );
 
 
 	}
