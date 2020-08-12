@@ -84,8 +84,8 @@ static void RageAntiAIm()
     ImGui::Spacing(); ImGui::Spacing();
     ImGui::Columns(1, nullptr, false);
     
-    ImGui::Checkbox(XORSTR("At the Target(alfa)"), &Settings::AntiAim::RageAntiAim::atTheTarget);
-    
+    ImGui::Checkbox(XORSTR("At Targets (alpha)"), &Settings::AntiAim::RageAntiAim::atTheTarget);
+    ImGui::Checkbox(XORSTR("Invert on hurt"), &Settings::AntiAim::RageAntiAim::invertOnHurt);
 
     ImGui::Spacing(); ImGui::Spacing();
     ImGui::Columns(1);
@@ -225,8 +225,24 @@ void HvH::RenderTab()
             ImGui::SameLine();
             ImGui::SliderInt(XORSTR("##FAKELAGAMOUNT"), &Settings::FakeLag::value, 0, 100, XORSTR("Amount: %0.f"));
 			ImGui::Checkbox(XORSTR("Adaptive Fake Lag"), &Settings::FakeLag::adaptive);
-            
+ImGui::Checkbox(XORSTR("Random Fake Lag"), &Settings::AntiAim::randomLag::enabled);
+                        ImGui::Checkbox(XORSTR("Slow Walk"), &Settings::AntiAim::SlowWalk::enabled);
+if (Settings::AntiAim::SlowWalk::enabled){
+            ImGui::SameLine(); 
+            UI::KeyBindButton(&Settings::AntiAim::SlowWalk::key);
+
+}
+                        ImGui::Checkbox(XORSTR("Double Tap"), &Settings::Ragebot::DoubleTap);
+
             ImGui::Checkbox(XORSTR("FakeDuck"), &Settings::AntiAim::FakeDuck::enabled);
+	    ImGui::Checkbox(XORSTR("Manual Resolver"), &Settings::Resolver::manual);
+	if (Settings::Resolver::manual){
+            ImGui::Checkbox(XORSTR("Force Bruteforce"), &Settings::Resolver::forcebrute);
+	    if (!Settings::Resolver::forcebrute){
+            ImGui::SliderFloat(XORSTR("##GOALFEETYAW"), &Settings::Resolver::goalFeetYaw, 0, 180, XORSTR("Amount: %0.f"));
+            ImGui::SliderFloat(XORSTR("##EYEANGLES"), &Settings::Resolver::EyeAngles, -60, 60, XORSTR("Amount: %0.f"));
+						}
+	}
             ImGui::SameLine(); 
             UI::KeyBindButton(&Settings::AntiAim::FakeDuck::fakeDuckKey);
             ImGui::EndChild();

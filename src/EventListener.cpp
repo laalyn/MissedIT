@@ -2,6 +2,7 @@
 
 #include "Hacks/legitbot.h"
 #include "Hacks/ragebot.h"
+#include "Hacks/antiaim.h"
 #include "Hacks/eventlog.h"
 #include "Hacks/hitmarkers.h"
 #include "Hacks/namestealer.h"
@@ -9,6 +10,7 @@
 #include "Hacks/skinchanger.h"
 #include "Hacks/spammer.h"
 #include "Hacks/valvedscheck.h"
+#include "Hacks/voterevealer.h"
 #include "interfaces.h"
 #include "SDK/IGameEvent.h"
 #include "settings.h"
@@ -28,14 +30,12 @@ void EventListener::FireGameEvent(IGameEvent* event)
 {
     Legitbot::FireGameEvent(event);
     Ragebot::FireGameEvent(event);
-
+    AntiAim::FireGameEvent(event);
     Hitmarkers::FireGameEvent(event);
     Eventlog::FireGameEvent(event);
     NameStealer::FireGameEvent(event);
-    
-    
+    VoteRevealer::FireGameEvent(event);
     Resolver::FireGameEvent(event);
-
     Spammer::FireGameEvent(event);
     ValveDSCheck::FireGameEvent(event);
     SkinChanger::FireGameEvent(event);

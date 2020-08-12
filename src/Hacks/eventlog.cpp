@@ -79,7 +79,39 @@ void Eventlog::FireGameEvent(IGameEvent* event)
 	C_BasePlayer* localplayer = (C_BasePlayer*) entityList->GetClientEntity(engine->GetLocalPlayer());
 	if (!localplayer)
 		return;
-
+const char* buyBotWeapons[] = 
+{
+	"buy glock",
+	"buy hkp2000",
+	"buy usp_silencer",
+	"buy elite",
+	"buy p250",
+	"buy tec9",
+	"buy fn57",
+	"buy deagle",
+	"buy galilar",
+	"buy famas",
+	"buy ak47",
+	"buy m4a1",
+	"buy m4a1_silencer",
+	"buy ssg08",
+	"buy aug",
+	"buy sg556",
+	"buy awp",
+	"buy scar20",
+	"buy g3sg1",
+	"buy nova",
+	"buy xm1014",
+	"buy mag7",
+	"buy m249",
+	"buy negev",
+	"buy mac10",
+	"buy mp9",
+	"buy mp7",
+	"buy ump45",
+	"buy p90",
+	"buy bizon"
+};
 	if (strstr(event->GetName(), XORSTR("player_hurt"))){
 
 		int hurt_player_id = event->GetInt(XORSTR("userid"));
@@ -329,5 +361,28 @@ void Eventlog::FireGameEvent(IGameEvent* event)
 
 		logToShow.insert(logToShow.begin(), std::pair<std::string, long>(dropLog, now));
 
+	} else if (strstr(event->GetName(), XORSTR("round_start"))){ 
+	if (Settings::buybot::enabled){
+	if (Settings::buybot::autosniper){
+	engine->ClientCmd_Unrestricted("buy elite;buy scar20;buy g3sg1;buy vesthelm;buy taser;buy defuser;buy molotov;buy incgrenade;buy hegrenade;buy smokegrenade"); 
+        }else if (Settings::buybot::scout){
+	engine->ClientCmd_Unrestricted("buy elite;buy ssg08;buy vesthelm;buy taser;buy defuser;buy molotov;buy incgrenade;buy hegrenade;buy smokegrenade"); 
 	}
+	}
+        }else if (strstr(event->GetName(), XORSTR("vote_cast"))){ 
+
+                std::string drop_player_id = event->GetString(XORSTR("entityid"));
+
+
+                long now = Util::GetEpochTime();
+                lastLogTimestamp = now;
+
+                std::string dropLog = std::string(drop_player_id);
+                dropLog += " casted a vote";
+
+                logToShow.insert(logToShow.begin(), std::pair<std::string, long>(dropLog, now));
+
+        } 
+
+
 }

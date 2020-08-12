@@ -92,6 +92,7 @@ namespace Colors
 			{ "ESP - Danger Zone: Tablet", &Settings::ESP::DangerZone::tabletColor },
 			{ "ESP - Danger Zone: Healthshot", &Settings::ESP::DangerZone::healthshotColor },
 			{ "ESP - Danger Zone: Melee", &Settings::ESP::DangerZone::meleeColor },
+			{ "ESP - Watermark", &Settings::ESP::Watermark::color },
 			{ "Chams - Team", &Settings::ESP::Chams::allyColor },
 			{ "Chams - Team Visible", &Settings::ESP::Chams::allyVisibleColor },
 			{ "Chams - Enemy", &Settings::ESP::Chams::enemyColor },

@@ -3,7 +3,7 @@
 
 #include "../interfaces.h"
 #include "../settings.h"
-
+#include "../Hacks/slowwalk.h"
 #include "../Hacks/bhop.h"
 #include "../Hacks/noduckcooldown.h"
 #include "../Hacks/autostrafe.h"
@@ -68,7 +68,7 @@ bool Hooks::CreateMove(void* thisptr, float flInputSampleTime, CUserCmd* cmd)
 		AutoKnife::CreateMove(cmd);
     	AntiAim::CreateMove(cmd);
 		FakeDuck::CreateMove(cmd);
-		
+		FakeWalk::CreateMove(cmd);
 		ESP::CreateMove(cmd);
 		TracerEffect::CreateMove(cmd);
 		RagdollGravity::CreateMove(cvar);

@@ -262,6 +262,7 @@ void Settings::LoadDefaultsOrSave(std::string path)
     settings[XORSTR("AntiAim")][XORSTR("AutoDisable")][XORSTR("knife_held")] = Settings::AntiAim::AutoDisable::knifeHeld;
     
     settings[XORSTR("AntiAim")][XORSTR("Rage AntiAim")][XORSTR("enabled")] = Settings::AntiAim::RageAntiAim::enable;
+    settings[XORSTR("AntiAim")][XORSTR("Rage AntiAim")][XORSTR("invertonhurt")] = Settings::AntiAim::RageAntiAim::invertOnHurt;
     settings[XORSTR("AntiAim")][XORSTR("Rage AntiAim")][XORSTR("Fake Percent")] = Settings::AntiAim::RageAntiAim::AntiAImPercent;
     settings[XORSTR("AntiAim")][XORSTR("Rage AntiAim")][XORSTR("Real Jitter Percent")] = Settings::AntiAim::RageAntiAim::JitterPercent;
     settings[XORSTR("AntiAim")][XORSTR("Rage AntiAim")][XORSTR("togglekey")] = Util::GetButtonName(Settings::AntiAim::RageAntiAim::InvertKey);
@@ -288,6 +289,9 @@ void Settings::LoadDefaultsOrSave(std::string path)
     settings[XORSTR("AntiAim")][XORSTR("LBYBreaker")][XORSTR("offset")] = Settings::AntiAim::LBYBreaker::offset;
 
     settings[XORSTR("Resolver")][XORSTR("resolve_all")] = Settings::Resolver::resolveAll;
+    settings[XORSTR("Resolver")][XORSTR("manual")] = Settings::Resolver::manual;
+    settings[XORSTR("Resolver")][XORSTR("goalFeetYaw")] = Settings::Resolver::goalFeetYaw;
+    settings[XORSTR("Resolver")][XORSTR("EyeAngles")] = Settings::Resolver::EyeAngles;
 
     settings[XORSTR("ESP")][XORSTR("enabled")] = Settings::ESP::enabled;
     settings[XORSTR("ESP")][XORSTR("backend")] = (int)Settings::ESP::backend;
@@ -891,6 +895,7 @@ void Settings::LoadConfig(std::string path)
     
     // Settings for RageAntiAIm
     GetVal(settings[XORSTR("AntiAim")][XORSTR("Rage AntiAim")][XORSTR("enabled")], &Settings::AntiAim::RageAntiAim::enable);
+    GetVal(settings[XORSTR("AntiAim")][XORSTR("Rage AntiAim")][XORSTR("invertonhurt")], &Settings::AntiAim::RageAntiAim::invertOnHurt);
     GetVal(settings[XORSTR("AntiAim")][XORSTR("Rage AntiAim")][XORSTR("Fake Percent")], &Settings::AntiAim::RageAntiAim::AntiAImPercent);
     GetVal(settings[XORSTR("AntiAim")][XORSTR("Rage AntiAim")][XORSTR("Real Jitter Percent")], &Settings::AntiAim::RageAntiAim::JitterPercent);
     GetButtonCode(settings[XORSTR("AntiAim")][XORSTR("Rage AntiAim")][XORSTR("togglekey")], &Settings::AntiAim::RageAntiAim::InvertKey);
@@ -917,6 +922,9 @@ void Settings::LoadConfig(std::string path)
     GetVal(settings[XORSTR("AntiAim")][XORSTR("LBYBreaker")][XORSTR("offset")], &Settings::AntiAim::LBYBreaker::offset);
 
     GetVal(settings[XORSTR("Resolver")][XORSTR("resolve_all")], &Settings::Resolver::resolveAll);
+    GetVal(settings[XORSTR("Resolver")][XORSTR("manual")], &Settings::Resolver::manual);
+    GetVal(settings[XORSTR("Resolver")][XORSTR("goalFeetYaw")], &Settings::Resolver::goalFeetYaw);
+    GetVal(settings[XORSTR("Resolver")][XORSTR("EyeAngles")], &Settings::Resolver::EyeAngles);
 
     GetVal(settings[XORSTR("ESP")][XORSTR("enabled")], &Settings::ESP::enabled);
     GetVal(settings[XORSTR("ESP")][XORSTR("backend")], (int*)&Settings::ESP::backend);

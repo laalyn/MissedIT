@@ -27,7 +27,7 @@ namespace Resolver
     inline std::pair<C_BasePlayer*, int> player;
     inline int TargetID = 0;
     extern std::vector<int64_t> Players;
-
+    //extern int indx;
     //Hooks
     void FrameStageNotify(ClientFrameStage_t stage); // This is where the resolver happens.
     void FireGameEvent(IGameEvent *event);			 // Strangely, I never see this getting called.

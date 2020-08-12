@@ -213,7 +213,6 @@ enum class ItemDefinitionIndex : short
 	GLOVE_SPECIALIST = 5034,
 	GLOVE_HYDRA = 5035
 };
-
 enum class EClassIds : int
 {
 	CAI_BaseNPC = 0,

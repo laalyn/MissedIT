@@ -1,4 +1,5 @@
 #include "visualstab.h"
+#include "../SDK/CPlayerResource.h"
 
 #pragma GCC diagnostic ignored "-Wformat-security"
 
@@ -19,7 +20,7 @@
 								};
 
 	const char* SmokeTypes[] = { "Wireframe", "None" };
-    const char* Sounds[] = { "None", "SpongeBob", "Half life", "Half life 2", "Half life 3", "Half life 4", "BB Gun Bell", "Dopamine", "Wub", "Pedo Yes!", "Meme", "Error", "Orchestral" };
+    const char* Sounds[] = { "None", "SpongeBob", "Half life", "Half life 2", "Half life 3", "Half life 4", "BB Gun Bell", "Dopamine", "Wub", "Pedo Yes!", "Meme", "Error", "Orchestral", "Gamesense" };
 	const char* SkyBoxes[] = {
 			"cs_baggage_skybox_", // 0
 			"cs_tibet",
@@ -278,7 +279,7 @@ void Visuals::RenderTab()
 			ImGui::PushItemWidth(-1);
 			if ( ImGui::BeginCombo(XORSTR("##Filter Visibility"),XORSTR("Visibility Filter")) )
 			{
-				ImGui::Selectable(XORSTR("Smoke Chekc"), &Settings::ESP::Filters::smokeCheck, ImGuiSelectableFlags_DontClosePopups);
+				ImGui::Selectable(XORSTR("Smoke Check"), &Settings::ESP::Filters::smokeCheck, ImGuiSelectableFlags_DontClosePopups);
 				ImGui::Selectable(XORSTR("Legit Mode"), &Settings::ESP::Filters::legit, ImGuiSelectableFlags_DontClosePopups);
 				ImGui::Selectable(XORSTR("Visibility Check"), &Settings::ESP::Filters::visibilityCheck, ImGuiSelectableFlags_DontClosePopups);
 				ImGui::EndCombo();
@@ -426,7 +427,13 @@ void Visuals::RenderTab()
 				ImGui::Checkbox(XORSTR("Show Footsteps"), &Settings::ESP::Sounds::enabled);
 				ImGui::Checkbox(XORSTR("No View Punch"), &Settings::View::NoViewPunch::enabled);
 				ImGui::Checkbox(XORSTR("No Sky"), &Settings::NoSky::enabled);
-
+                                ImGui::Checkbox(XORSTR("Show Keybinds"), &Settings::ESP::KeyBinds);
+				if (Settings::ESP::KeyBinds){
+        			int width, height;
+				ImGui::SliderInt(XORSTR("##X"), &Settings::ESP::keybi::x, 0, 1920, XORSTR("X: %0.f"));
+                                ImGui::SliderInt(XORSTR("##Y"), &Settings::ESP::keybi::y, 0, 1080, XORSTR("Y: %0.f"));
+							}
+				ImGui::Checkbox(XORSTR("Watermark"), &Settings::ESP::Watermark::enabled);
 				if ( ImGui::Button( XORSTR( "Material Config" ), ImVec2( -1, 0 ) ) )
 					ImGui::OpenPopup( XORSTR( "##MaterialConfigWindow" ) );
 				SetTooltip( XORSTR( "Advanced CSGO Gfx Settings\nExperimental" ) );
@@ -664,6 +671,23 @@ void Visuals::RenderTab()
 				ImGui::SliderInt(XORSTR("##HITMARKERGAP"), &Settings::ESP::Hitmarker::innerGap, 1, 16, XORSTR("Gap: %0.f"));
                 ImGui::Combo( XORSTR ( "Sounds##HITMARKERCOMBO" ), ( int* ) &Settings::ESP::Hitmarker::Sounds::sound, Sounds, IM_ARRAYSIZE( Sounds ) );
                 ImGui::PopItemWidth();
+			}
+ImGui::Separator();
+			ImGui::Text(XORSTR("Event logger"));
+			ImGui::Separator();
+			ImGui::Columns(2, nullptr, false);
+			{
+				ImGui::Checkbox(XORSTR("Show Enemies"), &Settings::Eventlog::showEnemies);
+				ImGui::Checkbox(XORSTR("Show Allies"), &Settings::Eventlog::showTeammates);
+			}
+			ImGui::NextColumn();
+			{
+				ImGui::PushItemWidth(-1);
+				ImGui::SliderFloat(XORSTR("##LOGGERDURATION"), &Settings::Eventlog::duration, 1000.f, 5000.f, XORSTR("Log duration: %0.f"));
+				ImGui::SliderFloat(XORSTR("##LOGGERLINES"), &Settings::Eventlog::lines, 5, 15, XORSTR("Log lines: %0.f"));
+				ImGui::Checkbox(XORSTR("Show LocalPlayer"), &Settings::Eventlog::showLocalplayer);
+ImGui::Checkbox(XORSTR("Sprite ESP"), &Settings::ESP::Sprite::enabled);
+				ImGui::PopItemWidth();
 			}
 			ImGui::Columns(1);
 			ImGui::Separator();

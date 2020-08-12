@@ -11,7 +11,8 @@
 #include "../Utils/bonemaps.h"
 #include "../Utils/xorstring.h"
 #include "../Hooks/hooks.h"
-
+#include "../SDK/CPlayerResource.h"
+#include "resolver.h"
 #include "../ATGUI/texture.h"
 #include "../Resources/tux.h"
 #include "antiaim.h"
@@ -19,7 +20,8 @@
 #include <climits>
 #include <deque>
 #include <mutex>
-
+#define TICK_INTERVAL			(globalVars->interval_per_tick)
+#define TIME_TO_TICKS( dt )		( (int)( 0.5f + (float)(dt) / TICK_INTERVAL ) )
 /* The engine->WorldToScreenMatrix() function can't be called at all times
  * So this is Updated in the Paint Hook for us */
 VMatrix vMatrix;
@@ -439,7 +441,6 @@ static void DrawBox( ImColor color, int x, int y, int w, int h, C_BaseEntity* en
 }*/
 }
 
-/* Not using anymore
 static void DrawSprite( int x, int y, int w, int h, C_BaseEntity* entity ){
 	if ( Settings::ESP::Sprite::type == SpriteType::SPRITE_TUX ) {
 		static Texture sprite(tux_rgba, tux_width, tux_height);
@@ -448,7 +449,27 @@ static void DrawSprite( int x, int y, int w, int h, C_BaseEntity* entity ){
 	}
 	// TODO: Handle other sprites
 }
-*/
+
+static void DrawWatermark(C_BasePlayer* player){
+        if (!Settings::ESP::Watermark::enabled)
+                return;
+int lag = TIME_TO_TICKS(player->GetSimulationTime() - player->GetOldSimulationTime());
+                int woop = lag;
+std::string bombStr = std::to_string(woop );
+
+                Draw::AddRectFilled(1653 + 73, 2, 1653 + 260, 30, ImColor(40, 40, 40, 225));
+                Draw::AddRectFilled(1653 + 5 + 73, 1 + 5, 1653 + 255, 30 - 5, ImColor(10, 10, 10, 225));
+                Draw::AddRect(1653 - 1 + 73, 1, 1653 + 261, 31, ImColor(200, 200, 200, 50));
+                Draw::AddRect(1652 + 5 + 73, 1 + 5, 1653 + 256, 31 - 5, ImColor(200, 200, 200, 50));
+                Draw::AddLine(1653 + 6 + 73, 1 + 5, 1653 + 254, 1 + 5, Settings::ESP::Watermark::color.Color());
+                int fps = static_cast< int >( 1.f / globalVars->frametime );
+                std::string fps_string = std::to_string(fps);
+//std::string name = "eyehook | " + fps_string + " fps | 39ms";
+std::string name = "eye     | " + fps_string + " fps | " + bombStr + "FL";
+
+Draw::AddText(1653 + 10 + 73, 11, name.c_str(), ImColor( 255, 255, 255, 255 ) );
+Draw::AddText(1653 + 10 + 73 + 21, 11, "hook", ImColor( 255, 166, 14, 255 ) );
+}
 
 static void DrawEntity( C_BaseEntity* entity, const char* string, ImColor color ) {
 	int x, y, w, h;
@@ -459,7 +480,18 @@ static void DrawEntity( C_BaseEntity* entity, const char* string, ImColor color 
 	Vector2D nameSize = Draw::GetTextSize( string, esp_font );
 	Draw::AddText(( int ) ( x + ( w / 2 ) - ( nameSize.x / 2 ) ), y + h + 2, string, color );
 }
+static void DrawLag(int x, int y, C_BasePlayer* player){
+int lag = TIME_TO_TICKS(player->GetSimulationTime() - player->GetOldSimulationTime());
+		int woop = lag * 10;
+std::string bombStr = std::to_string(woop );
+                Vector2D nameSize = Draw::GetTextSize(bombStr.c_str(), esp_font);
+                Draw::AddText(x + woop - nameSize.x, y + 5, bombStr.c_str()  , ImColor( 255, 255, 255, 255 ) );
+                
+Draw::AddRectFilled(x, y, x + woop, y + 10, ImColor(0, 40, 0, 255));
 
+
+
+}
 static void DrawSkeleton( C_BasePlayer* player, C_BasePlayer* localplayer ) {
 	studiohdr_t* pStudioModel = modelInfo->GetStudioModel( player->GetModel() );
 	if ( !pStudioModel )
@@ -678,7 +710,45 @@ static void DrawSounds( C_BasePlayer *player, ImColor playerColor ) {
         footstepMutex.unlock();
     }
 }
+static void DrawKeyBinds(int x, int y) {
+int b = x;
+int c = y;
+C_BasePlayer* localplayer = (C_BasePlayer*) entityList->GetClientEntity(engine->GetLocalPlayer());
+		int width, height;
+engine->GetScreenSize(width,height);
+		//260
+// 		Draw::AddRectFilled(1653 + 73, 2, 1653 + 260, 30, ImColor(40, 40, 40, 225));
+// 		Draw::AddRectFilled(1653 + 5 + 73, 1 + 5, 1653 + 255, 30 - 5, ImColor(10, 10, 10, 225));
+// 		Draw::AddRect(1653 - 1 + 73, 1, 1653 + 261, 31, ImColor(200, 200, 200, 50));
+// 		Draw::AddRect(1652 + 5 + 73, 1 + 5, 1653 + 256, 31 - 5, ImColor(200, 200, 200, 50));
+// 		Draw::AddLine(1653 + 6 + 73, 1 + 5, 1653 + 254, 1 + 5, Settings::ESP::Chams::Arms::color.Color());
+// int fps = static_cast< int >( 1.f / globalVars->frametime );
+//               std::string fps_string = std::to_string(fps);
+// //std::string name = "eyehook | " + fps_string + " fps | 39ms";
+// std::string name = "eye     | " + fps_string + " fps | 39ms";
 
+// Draw::AddText(1653 + 10 + 73, 11, name.c_str(), ImColor( 255, 255, 255, 255 ) );
+// Draw::AddText(1653 + 10 + 73 + 21, 11, "hook", ImColor( 255, 166, 14, 255 ) );
+Vector2D nameSize = Draw::GetTextSize(XORSTR("MissedIt | 127.0.0.1 | delay: 25ms | 64tick | 05/08/2020"), esp_font);
+//Vector2D nameSize = Draw::GetTextSize(XORSTR("onetap"), esp_font);
+//Draw::AddRectFilled( x - 1, y - 35, 203, y + 19, ImColor( 0, 0, 0, 199 ) );
+//Draw::AddRectFilled(1736 * 0.99 - nameSize.x, 8, nameSize.x + 10, 23, ImColor( 56, 60, 67, 255 ) );
+//Draw::AddText(5, 12, "MissedIt | 127.0.0.1 | delay: 25ms | 64tick | 05/08/2020", ImColor( 255, 255, 255, 255 ) );
+if (inputSystem->IsButtonDown(Settings::Autoblock::key) && Settings::Autoblock::enabled){
+                Draw::AddText( x, y, "AutoBlock [Enabled]", ImColor( 255, 0, 255, 255 ) );
+y = y + 10;
+}
+if (inputSystem->IsButtonDown(Settings::AntiAim::SlowWalk::key) && Settings::AntiAim::SlowWalk::enabled){
+                Draw::AddText( x, y, "SlowWalk [Enabled]", ImColor( 255, 0, 255, 255 ) );
+y = y + 10;
+}
+if (Settings::AntiAim::RageAntiAim::inverted && Settings::AntiAim::RageAntiAim::enable){
+                Draw::AddText( x, y, "AntiAim Inverter [Toggled]", ImColor( 255, 0, 255, 255 ) );
+y = y + 10;
+}
+
+
+}
 static void DrawPlayerHealthBars( C_BasePlayer* player, int x, int y, int w, int h, ImColor color, BarType& bartype ) {
 	
 	int boxSpacing = 3;
@@ -772,7 +842,20 @@ static void DrawPlayerText( C_BasePlayer* player, C_BasePlayer* localplayer, int
 		Draw::AddText( x + ( w / 2 ) - ( nameSize.x / 2 ), ( y - textSize.y - nameOffset ), displayString.c_str(), Entity::IsTeamMate(player, localplayer) ? Settings::ESP::allyInfoColor.Color() : Settings::ESP::enemyInfoColor.Color() );
 		lineNum++;
 	}
-
+	//if (player->GetIndex() == Resolver::indx){
+	if (player->GetEyeAngles()->x < 65.f || player->GetEyeAngles()->x > 90.f && Settings::Resolver::resolveAll && !(Entity::IsTeamMate(player, localplayer)) ){
+	Vector2D rankSize = Draw::GetTextSize( "Resolving: Legit AA", esp_font );
+        Draw::AddText( ( x + ( w / 2 ) - ( rankSize.x / 2 ) ),( y - ( textSize.y * lineNum ) - nameOffset ), "Resolving: Legit AA", Entity::IsTeamMate(player, localplayer) ? Settings::ESP::allyInfoColor.Color() : Settings::ESP::enemyInfoColor.Color() );
+	}
+        else if (Settings::Resolver::resolveAll && !(Entity::IsTeamMate(player, localplayer))){
+        Vector2D rankSize = Draw::GetTextSize( "Resolving: Rage AA", esp_font );
+        Draw::AddText( ( x + ( w / 2 ) - ( rankSize.x / 2 ) ),( y - ( textSize.y * lineNum ) - nameOffset ), "Resolving: Rage AA", Entity::IsTeamMate(player, localplayer) ? Settings::ESP::allyInfoColor.Color() : Settings::ESP::enemyInfoColor.Color() );
+        }
+	else if (Settings::Resolver::manual && !(Entity::IsTeamMate(player, localplayer))){
+	Vector2D rankSize = Draw::GetTextSize( "Manual Resolver", esp_font );
+        Draw::AddText( ( x + ( w / 2 ) - ( rankSize.x / 2 ) ),( y - ( textSize.y * lineNum ) - nameOffset ), "Manual Resolver", Entity::IsTeamMate(player, localplayer) ? Settings::ESP::allyInfoColor.Color() : Settings::ESP::enemyInfoColor.Color() );	
+	}
+	//}
 	// draw steamid
 	if ( Settings::ESP::Info::steamId ) {
 		IEngineClient::player_info_t playerInfo;
@@ -802,17 +885,155 @@ static void DrawPlayerText( C_BasePlayer* player, C_BasePlayer* localplayer, int
 	if ( Settings::ESP::Info::armor ) {
 		std::string buf = std::to_string( player->GetArmor() ) + (player->HasHelmet() ? XORSTR(" AP*") : XORSTR(" AP"));
 		Draw::AddText( x + w + boxSpacing, ( y + h - (textSize.y / 3) ), buf.c_str(), Entity::IsTeamMate(player, localplayer) ? Settings::ESP::allyInfoColor.Color() : Settings::ESP::enemyInfoColor.Color() );
+	   //             Draw::AddText( x + w + boxSpacing, ( y + h - (textSize.y / 3) ), "", Entity::IsTeamMate(player, localplayer) ? Settings::ESP::allyInfoColor.Color() : Settings::ESP::enemyInfoColor.Color() );
 	}
 
 	// weapon
 	C_BaseCombatWeapon* activeWeapon = ( C_BaseCombatWeapon* ) entityList->GetClientEntityFromHandle( player->GetActiveWeapon() );
 	if ( Settings::ESP::Info::weapon && activeWeapon ) {
-		std::string modelName = Util::Items::GetItemDisplayName( *activeWeapon->GetItemDefinitionIndex() );
+		//std::string modelName = Util::Items::GetItemDisplayName( *activeWeapon->GetItemDefinitionIndex() );
 		int offset = ( int ) ( Settings::ESP::Bars::type == BarType::HORIZONTAL ||
 							   Settings::ESP::Bars::type == BarType::INTERWEBZ ? boxSpacing + barsSpacing.y + 1 : 0 );
 
-		Vector2D weaponTextSize = Draw::GetTextSize( modelName.c_str(), esp_font );
-		Draw::AddText( ( x + ( w / 2 ) - ( weaponTextSize.x / 2 ) ), y + h + offset, modelName.c_str(), Entity::IsTeamMate(player, localplayer) ? Settings::ESP::allyInfoColor.Color() : Settings::ESP::enemyInfoColor.Color() );
+		//HFont icons = Fonts::CreateFont("csgo_icons", 25, 0);
+		//Draw::Text( x + w + boxSpacing, ( y + h - (textSize.y / 3) ), \uE001, icon_font,Color::FromImColor( Entity::IsTeamMate(player, localplayer) ? Settings::ESP::allyInfoColor.Color() : Settings::ESP::enemyInfoColor.Color()) );
+		//Vector2D weaponTextSize = Draw::GetTextSize( modelName.c_str(), esp_font );
+		//Draw::AddText( ( x + ( w / 2 ) - ( weaponTextSize.x / 2 ) ), y + h + offset, modelName.c_str(), Entity::IsTeamMate(player, localplayer) ? Settings::ESP::allyInfoColor.Color() : Settings::ESP::enemyInfoColor.Color() );
+
+		switch (activeWeapon) {
+		case ItemDefinitionIndex::WEAPON_KNIFE_T:
+			 modelName =  ("[");
+			break;
+		case ItemDefinitionIndex::WEAPON_DEAGLE:
+			 modelName =  ("A");
+			break;
+		case ItemDefinitionIndex::WEAPON_AUG:
+			 modelName =  ("U");
+			break;
+		case ItemDefinitionIndex::WEAPON_G3SG1:
+			 modelName =  ("X");
+			break;
+		case ItemDefinitionIndex::WEAPON_MAC10:
+			 modelName =  ("K");
+			break;
+		case ItemDefinitionIndex::WEAPON_P90:
+			 modelName =  ("P");
+			break;
+		case ItemDefinitionIndex::WEAPON_SSG08:
+			 modelName =  ("a");
+        break;
+		case ItemDefinitionIndex::WEAPON_SCAR20:
+			 modelName =  ("Y");
+        break;
+		case ItemDefinitionIndex::WEAPON_UMP45:
+			 modelName =  ("L");
+        break;
+		case ItemDefinitionIndex::WEAPON_ELITE:
+			 modelName =  ("B");
+        break;
+		case ItemDefinitionIndex::WEAPON_FAMAS:
+			 modelName =  ("R");
+        break;
+		case ItemDefinitionIndex::WEAPON_FIVESEVEN:
+			 modelName =  ("C");
+        break;
+		case ItemDefinitionIndex::WEAPON_GALILAR:
+			 modelName =  ("Q");
+        break;
+		case ItemDefinitionIndex::WEAPON_M4A1_SILENCER:
+			 modelName =  ("T");
+        break;
+		case ItemDefinitionIndex::WEAPON_M4A1:
+			 modelName =  ("S");
+        break;
+		case ItemDefinitionIndex::WEAPON_P250:
+			 modelName =  ("F");
+        break;
+		case ItemDefinitionIndex::WEAPON_M249:
+			 modelName =  ("g");
+        break;
+		case ItemDefinitionIndex::WEAPON_XM1014:
+			 modelName =  ("b");
+        break;
+		case ItemDefinitionIndex::WEAPON_GLOCK:
+			 modelName =  ("D");
+        break;
+		case ItemDefinitionIndex::WEAPON_USP_SILENCER:
+			 modelName =  ("G");
+        break;
+		case ItemDefinitionIndex::WEAPON_HKP2000:
+			 modelName =  ("E");
+        break;
+		case ItemDefinitionIndex::WEAPON_AK47:
+			 modelName =  ("W");
+        break;
+		case ItemDefinitionIndex::WEAPON_AWP:
+			 modelName =  ("Z");
+        break;
+		case ItemDefinitionIndex::WEAPON_BIZON:
+			 modelName =  ("M");
+        break;
+		case ItemDefinitionIndex::WEAPON_MAG7:
+			 modelName =  ("d");
+        break;
+		case ItemDefinitionIndex::WEAPON_NEGEV:
+			 modelName =  ("f");
+        break;
+		case ItemDefinitionIndex::WEAPON_SAWEDOFF:
+			 modelName =  ("c");
+        break;
+		case ItemDefinitionIndex::WEAPON_TEC9:
+			 modelName =  ("H");
+        break;
+		case ItemDefinitionIndex::WEAPON_TASER:
+			 modelName =  ("h");
+        break;
+		case ItemDefinitionIndex::WEAPON_NOVA:
+			 modelName =  ("e");
+        break;
+		case ItemDefinitionIndex::WEAPON_CZ75A:
+			 modelName =  ("I");
+		case ItemDefinitionIndex::WEAPON_SG556:
+			 modelName =  ("V");
+        break;
+		case ItemDefinitionIndex::WEAPON_REVOLVER:
+			 modelName =  ("J");
+        break;
+		case ItemDefinitionIndex::WEAPON_MP7:
+			 modelName =  ("N");
+        break;
+		case ItemDefinitionIndex::WEAPON_MP9:
+			 modelName =  ("O");
+        break;
+		case ItemDefinitionIndex::WEAPON_MP5:
+			 modelName =  ("L");
+        break;
+		case ItemDefinitionIndex::WEAPON_C4:
+			 modelName =  ("o");
+        break;
+		case ItemDefinitionIndex::WEAPON_FRAG_GRENADE:
+			 modelName =  ("j");
+        break;
+		case ItemDefinitionIndex::WEAPON_SMOKEGRENADE:
+			 modelName =  ("k");
+        break;
+		case ItemDefinitionIndex::WEAPON_MOLOTOV:
+			 modelName =  ("l");
+        break;
+		case ItemDefinitionIndex::WEAPON_INCGRENADE:
+			 modelName =  ("n");
+        break;
+		case ItemDefinitionIndex::WEAPON_FLASHBANG:
+			 modelName =  ("i");
+        break;
+		case ItemDefinitionIndex::WEAPON_DECOY:
+			 modelName =  ("m");
+        break;
+		}
+                                Vector2D weaponTextSizeF = Draw::GetTextSize(modelName , astrium );
+		Draw::Text( ( x + ( w / 2 ) - ( weaponTextSizeF.x / 2 ) ), y + h + offset, modelName, astrium,Color::FromImColor( Entity::IsTeamMate(player, localplayer) ? Settings::ESP::allyInfoColor.Color() : Settings::ESP::enemyInfoColor.Color()) );
+
+
 	}
 	// draw info
 	std::vector<std::string> stringsToShow;
@@ -824,7 +1045,7 @@ static void DrawPlayerText( C_BasePlayer* player, C_BasePlayer* localplayer, int
 		stringsToShow.push_back(money);
 	}
 	if ( Settings::ESP::Info::scoped && player->IsScoped() )
-		stringsToShow.push_back( XORSTR( "Scoped" ) );
+		stringsToShow.push_back( XORSTR( "B" ) );
 	if (Settings::ESP::Info::reloading)
 	{
 		CUtlVector<AnimationLayer> *layers = player->GetAnimOverlay();
@@ -841,7 +1062,7 @@ static void DrawPlayerText( C_BasePlayer* player, C_BasePlayer* localplayer, int
 	if ( Settings::ESP::Info::planting && player->GetIndex() == ( *csPlayerResource )->GetPlayerC4() )
 		stringsToShow.push_back( XORSTR( "Bomb Carrier" ) );
 	if ( Settings::ESP::Info::hasDefuser && player->HasDefuser() )
-		stringsToShow.push_back( XORSTR( "Kit" ) );
+		stringsToShow.push_back( XORSTR( "r" ) );
 	if ( Settings::ESP::Info::defusing && player->IsDefusing() )
 		stringsToShow.push_back( XORSTR( "Defusing" ) );
 	if ( Settings::ESP::Info::grabbingHostage && player->IsGrabbingHostage() )
@@ -859,8 +1080,23 @@ static void DrawPlayerText( C_BasePlayer* player, C_BasePlayer* localplayer, int
 
 
 	for( unsigned int i = 0; i < stringsToShow.size(); i++ ){
+if (stringsToShow[i] != "B" && stringsToShow[i] != "r"){
 		Draw::AddText( x + w + boxSpacing, ( y + ( i * ( textSize.y + 2 ) ) ), stringsToShow[i].c_str(), Entity::IsTeamMate(player, localplayer) ? Settings::ESP::allyInfoColor.Color() : Settings::ESP::enemyInfoColor.Color() );
+}
+if (stringsToShow[i] == "r"){
+                Draw::Text( x + w + boxSpacing, ( y + ( i * ( textSize.y + 2 ) ) ), stringsToShow[i].c_str(), astrium,Color::FromImColor( Entity::IsTeamMate(player, localplayer) ? Settings::ESP::allyInfoColor.Color() : Settings::ESP::enemyInfoColor.Color()) );
+}
+
+if (stringsToShow[i] == "B"){
+		Draw::Text( x + w + boxSpacing, ( y + ( i * ( textSize.y + 2 ) ) ), stringsToShow[i].c_str(), icon_font,Color::FromImColor( Entity::IsTeamMate(player, localplayer) ? Settings::ESP::allyInfoColor.Color() : Settings::ESP::enemyInfoColor.Color()) );
+}
+
 	}
+//	if(player->IsScoped()){
+ 
+//Draw::TextW( x + w + boxSpacing, ( y + h ), L"\356\200\202", icon_font,Color::FromImColor( Entity::IsTeamMate(player, localplayer) ? Settings::ESP::allyInfoColor.Color() : Settings::ESP::enemyInfoColor.Color()) );
+//}
+
 }
 
 static void DrawPlayer(C_BasePlayer* player)
@@ -948,8 +1184,8 @@ static void DrawPlayer(C_BasePlayer* player)
 			DrawPlayerText( player, localplayer, x, y, w, h );
 		
 	}
-	// if (Settings::ESP::Sprite::enabled)
-    //     DrawSprite(x, y, w, h, player);
+	if (Settings::ESP::Sprite::enabled)
+       DrawSprite(x, y, w, h, player);
 	// This is brocken xd
 	// if (Settings::ESP::BulletTracers::enabled)
 	// 	DrawBulletTrace(player);
@@ -989,7 +1225,7 @@ static void DrawPlantedBomb(C_PlantedC4* bomb, C_BasePlayer* localplayer)
 		return;
 
 	ImColor color = bomb->GetBombDefuser() != -1 || bomb->IsBombDefused() ? Settings::ESP::bombDefusingColor.Color() : Settings::ESP::bombColor.Color();
-
+	float defuseTimer = bomb->GetBombDefuseCountDown() - globalVars->curtime;
 	float bombTimer = bomb->GetBombTime() - globalVars->curtime;
 	std::stringstream displayText;
 	if (bomb->IsBombDefused() || !bomb->IsBombTicking() || bombTimer <= 0.f)
@@ -1010,8 +1246,18 @@ static void DrawPlantedBomb(C_PlantedC4* bomb, C_BasePlayer* localplayer)
 		float flDamage = a * expf(-d * d);
 
 		float damage = std::max((int) ceilf(GetArmourHealth(flDamage, localplayer->GetArmor())), 0);
-
 		displayText << XORSTR("Bomb: ") << std::fixed << std::showpoint << std::setprecision(1) << bombTimer << XORSTR(", damage: ") << (int) damage;
+		Draw::AddRectFilled(-1920, 0, bombTimer * 50, 10, ImColor( 255, 0, 0, 150 ) );
+		std::string bombStr = std::to_string(roundf(bombTimer * 100) / 100 );
+		std::string st = bombStr.substr(0, bombStr.size()-4);
+                Vector2D nameSize = Draw::GetTextSize(st.c_str(), esp_font);
+		Draw::AddText(bombTimer * 50 - nameSize.x, 0, st.c_str()  , ImColor( 255, 255, 255, 255 ) );
+
+	if( bomb->GetBombDefuser() != -1 ){
+                Draw::AddRectFilled(-1920, -15, defuseTimer * 50, 15, ImColor( 0, 0, 255, 150 ) );
+                //Draw::AddText( XORSTR("") << defuseTimer * 50, -15, XORSTR("") << defuseTimer, ImColor( 0, 0, 0, 255 ) );
+
+	}
 	}
 
 	DrawEntity(bomb, displayText.str().c_str(), color);
@@ -1597,13 +1843,17 @@ void ESP::Paint()
 				DrawDZItems(entity, localplayer);
 		}
 	}
-
+	DrawLag(500, 500, localplayer);
+	if (Settings::ESP::KeyBinds)
+        	DrawKeyBinds(Settings::ESP::keybi::x, Settings::ESP::keybi::y);
 	if (Settings::ESP::FOVCrosshair::enabled)
 		DrawFOVCrosshair();
 	if (Settings::ESP::Spread::enabled || Settings::ESP::Spread::spreadLimit)
 		DrawSpread();
 	if (Settings::NoScopeBorder::enabled && localplayer->IsScoped())
 		DrawScope();
+
+		DrawWatermark(localplayer);
 }
 
 void ESP::DrawModelExecute()
@@ -1625,6 +1875,7 @@ void ESP::CreateMove(CUserCmd* cmd)
     if( Settings::ESP::enabled && Settings::ESP::Sounds::enabled && (Settings::ESP::Filters::allies || Settings::ESP::Filters::enemies || Settings::ESP::Filters::localplayer) ){
         CheckActiveSounds();
     }
+
 }
 
 void ESP::PaintToUpdateMatrix( ) {

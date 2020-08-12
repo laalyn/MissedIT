@@ -13,6 +13,7 @@ void Offsets::GetNetVarOffsets()
 	offsets.DT_BasePlayer.m_viewPunchAngle = NetVarManager::GetOffset(tables, XORSTR("DT_BasePlayer"), XORSTR("m_viewPunchAngle"));
 	offsets.DT_BasePlayer.m_vecViewOffset = NetVarManager::GetOffset(tables, XORSTR("DT_BasePlayer"), XORSTR("m_vecViewOffset[0]"));
 	offsets.DT_BasePlayer.m_nTickBase = NetVarManager::GetOffset(tables, XORSTR("DT_BasePlayer"), XORSTR("m_nTickBase"));
+        offsets.DT_BasePlayer.m_nTickBaseShift = NetVarManager::GetOffset(tables, XORSTR("DT_BasePlayer"), XORSTR("m_nTickBaseShift"));
 	offsets.DT_BasePlayer.m_vecVelocity = NetVarManager::GetOffset(tables, XORSTR("DT_BasePlayer"), XORSTR("m_vecVelocity[0]"));
 	offsets.DT_BasePlayer.m_iHealth = NetVarManager::GetOffset(tables, XORSTR("DT_BasePlayer"), XORSTR("m_iHealth"));
 	offsets.DT_BasePlayer.m_lifeState = NetVarManager::GetOffset(tables, XORSTR("DT_BasePlayer"), XORSTR("m_lifeState"));
@@ -84,6 +85,10 @@ void Offsets::GetNetVarOffsets()
 	offsets.DT_PlantedC4.m_flC4Blow = NetVarManager::GetOffset(tables, XORSTR("DT_PlantedC4"), XORSTR("m_flC4Blow"));
 	offsets.DT_PlantedC4.m_bBombDefused = NetVarManager::GetOffset(tables, XORSTR("DT_PlantedC4"), XORSTR("m_bBombDefused"));
 	offsets.DT_PlantedC4.m_hBombDefuser = NetVarManager::GetOffset(tables, XORSTR("DT_PlantedC4"), XORSTR("m_hBombDefuser"));
+	offsets.DT_PlantedC4.m_flDefuseCountDown = NetVarManager::GetOffset(tables, XORSTR("DT_PlantedC4"), XORSTR("m_flDefuseCountDown"));
+	offsets.DT_PlantedC4.m_flDefuseLength = NetVarManager::GetOffset(tables, XORSTR("DT_PlantedC4"), XORSTR("m_flDefuseLength"));
+	offsets.DT_PlantedC4.m_nBombSite = NetVarManager::GetOffset(tables, XORSTR("DT_PlantedC4"), XORSTR("m_nBombSite"));
+
 
 	offsets.DT_CSPlayer.m_iShotsFired = NetVarManager::GetOffset(tables, XORSTR("DT_CSPlayer"), XORSTR("m_iShotsFired"));
 	offsets.DT_CSPlayer.m_angEyeAngles[0] = NetVarManager::GetOffset(tables, XORSTR("DT_CSPlayer"), XORSTR("m_angEyeAngles[0]"));

@@ -58,6 +58,49 @@ enum class ClanTagType : int
 	LETTERS,
 };
 
+enum class MusicType : int
+{
+        CSGO,
+        CSGO2,
+        CRIMSON_ASSAULT,
+        SHARPENED,
+	INSURGENCY,
+	ADB,
+	HIGH_MOON,
+	DEATHS_HEAD_DEMOLITION,
+	DESERT_FIRE,
+	LNOE,
+	METAL,
+	ALL_I_WANT_FOR_CHRISTMAS,
+	ISORHYTHM,
+	FOR_NO_MANKIND,
+	HOTLINE_MIAMI,
+	TOTAL_DOMINATION,
+	THE_TALOS_PRINCIPLE,
+	BATTLEPACK,
+	MOLOTOV,
+	UBER_BLASTO_PHONE,
+	HAZARDOUS_ENVIRONMENTS,
+	II_HEADSHOT,
+	THE_8_BIT_KIT,
+	I_AM,
+	DIAMONDS,
+	INVASION,
+	LIONS_MOUTH,
+	SPONGE_FINGERZ,
+	DISGUSTING,
+	JAVA_HAVANA_FUNKALOO,
+	MOMENTS_CSGO,
+	AGGRESSIVE,
+	THE_GOOD_YOUTH,
+	FREE,
+	LIFES_NOT_OUT_TO_GET_YOU,
+	BACKBONE,
+	GLA,
+	III_ARENA,
+	EZ4ENCE,
+};
+
 enum class AutostrafeType : int
 {
 	AS_FORWARDS,
@@ -65,6 +108,7 @@ enum class AutostrafeType : int
 	AS_LEFTSIDEWAYS,
 	AS_RIGHTSIDEWAYS,
 	AS_RAGE,
+	AS_DIRECTIONAL,
 };
 
 enum class ChamsType : int
@@ -113,7 +157,7 @@ enum class Sound : int {
 	MEME,
 	ERROR,
 	ORCHESTRAL,
-
+	GAMESENSE,
 };
 
 enum class BarType : int
@@ -457,7 +501,7 @@ namespace Settings
 		{
 			namespace ESP
 			{
-				inline char* family = (char*)"Georgia";
+				inline char* family = (char*)"Verdana";
 				inline int size = 12;
 				inline int flags = (int)FontFlags::FONTFLAG_OUTLINE;
 			}
@@ -618,9 +662,23 @@ namespace Settings
                 { ItemDefinitionIndex::INVALID, defaultSettings },
         };
 	}
+		namespace ProfileChanger
+                {
+                extern int coinID;
+                extern int musicID;
+                extern int compRank;
+                extern int weaponStatus;
+                extern int weaponRarity;
+		extern int music;
+		extern int rank;
+		extern int coin;
+                extern bool enabled;
+		inline MusicType type = MusicType::CSGO;
+                }
 
 	namespace Ragebot
 	{
+		inline bool DoubleTap;
 		inline float MinDamage = 50.f;
 		inline bool enabled = false;
         inline bool silent = false;
@@ -722,7 +780,14 @@ namespace Settings
 
     namespace AntiAim
     {
-		namespace Type
+	namespace SlowWalk 
+		{
+	inline float Speed;
+	inline bool enabled;
+	inline ButtonCode_t key = ButtonCode_t::KEY_LSHIFT;
+
+		}
+	namespace Type
 		{
 			inline AntiAimType antiaimType = AntiAimType::LegitAntiAim;
 		}
@@ -733,8 +798,9 @@ namespace Settings
         }
         namespace RageAntiAim
         {
+	    inline bool invertOnHurt = false;
             inline bool enable = false;
-			inline ButtonCode_t InvertKey = ButtonCode_t::KEY_T;
+			inline ButtonCode_t InvertKey;
 			inline bool inverted = false;
 			inline float AntiAImPercent = 100.f;
 			inline float JitterPercent = 30.f;
@@ -779,16 +845,33 @@ namespace Settings
 			inline bool enabled = false;
 			inline ButtonCode_t fakeDuckKey = ButtonCode_t::KEY_LCONTROL;
 		}
+  namespace randomLag
+                {
+                        inline bool enabled = false;
+                }
+
 	}
 
 	namespace Resolver
 	{
 		inline bool resolveAll = false;
+		inline float goalFeetYaw;
+		inline float EyeAngles;
+		inline bool manual = false;
+		inline bool forcebrute = false;
 	}
 
 	namespace ESP
 	{
-		inline bool enabled = false;
+		inline bool KeyBinds = false;
+	namespace keybi
+	{
+		inline int x;
+		inline int y;
+		inline int w;
+		inline int h;
+	}
+	inline bool enabled = false;
         inline DrawingBackend backend = DrawingBackend::IMGUI;
 		inline Filter filter = Filter::Enemies;
 		inline ButtonCode_t key = ButtonCode_t::KEY_Z;
@@ -818,6 +901,11 @@ namespace Settings
         inline ColorVar chargeColor = ImColor(205, 32, 31, 255);
         inline ColorVar allyInfoColor = ImColor(255, 255, 255, 255);
         inline ColorVar enemyInfoColor = ImColor(255, 255, 255, 255);
+           namespace Watermark
+                {
+                inline bool enabled = true;
+                inline ColorVar color = ImColor(215, 5, 252, 255);
+                }
 
 		namespace FilterEnemy
 		{
@@ -1092,7 +1180,6 @@ namespace Settings
 		{
 			inline bool enabled = false;
 		}
-
 		namespace FOVCrosshair
 		{
 			inline bool enabled = false;
@@ -1598,6 +1685,16 @@ namespace Settings
 	namespace AngleIndicator
 	{
 		inline bool enabled = false;
+	}
+	namespace voterevealer
+	{
+		inline bool enabled;
+	}
+	namespace buybot
+	{
+	inline bool enabled = false;
+	inline bool scout = false;
+	inline bool autosniper = false;
 	}
     namespace Debug
     {

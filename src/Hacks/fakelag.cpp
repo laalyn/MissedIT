@@ -18,6 +18,20 @@ static void fakeDuck(CUserCmd* cmd )
 
 	FakeLag::ticks > 7 ? cmd->buttons |= IN_DUCK : cmd->buttons &= ~IN_DUCK;
 }
+int random_int(int min, int max) {
+   return min + rand() % (max - min);
+}
+
+static void randomLag(CUserCmd* cmd )
+{
+        if (!Settings::AntiAim::randomLag::enabled)
+                return;
+	if (Settings::FakeLag::adaptive)
+		return;
+
+Settings::FakeLag::value = random_int(1, 14);
+}
+
 void FakeLag::CreateMove(CUserCmd* cmd)
 {
 	// fakeDuck( cmd ); // for fake ducking don't ask my why here
@@ -61,8 +75,15 @@ void FakeLag::CreateMove(CUserCmd* cmd)
 
 			CreateMove::sendPacket = FakeLag::ticks < 16 - packetsToChoke;
 		}
-		else
+		else{
+		if (!Settings::AntiAim::randomLag::enabled){
 			CreateMove::sendPacket = FakeLag::ticks < 16 - Settings::FakeLag::value;
+		}
+		else {
+CreateMove::sendPacket = FakeLag::ticks < 16 - random_int(1, 14);
+		}
+		}
+	
 	}
 
 	FakeLag::ticks++;

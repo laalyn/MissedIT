@@ -14,7 +14,7 @@
 #include "valvedscheck.h"
 #include "ragebot.h"
 #include "../Utils/draw.h"
-
+#include "../SDK/vector.h"
 #define GetPercentVal(val, percent) (val * (percent/100.f))
 
 #ifndef LessThan
@@ -308,13 +308,15 @@ static void DefaultRageAntiAim(C_BasePlayer *const localplayer, QAngle& angle, C
                 break;
 
             case AntiAimFakeType_y::Static:
-                AntiAim::fakeAngle.y = angle.y = inverted ? (angle.y-180.f)+GetPercentVal(maxDelta/2, AntiAImPercent) : (angle.y-180.f)-GetPercentVal(maxDelta/2, AntiAImPercent);
+                AntiAim::fakeAngle.y = cmd->viewangles.y = inverted ? (angle.y-180.f)+GetPercentVal(maxDelta/2, AntiAImPercent) : (angle.y-180.f)-GetPercentVal(maxDelta/2, AntiAImPercent);
                 break;
 
             case AntiAimFakeType_y::Jitter:
                 static bool bFlip = false;
                 bFlip = !bFlip;
-                AntiAim::fakeAngle.y = angle.y = bFlip ?  (angle.y-180.f)-GetPercentVal(maxDelta/2, AntiAImPercent) : (angle.y-180.f)+GetPercentVal(maxDelta/2, AntiAImPercent);
+//                AntiAim::fakeAngle.y = angle.y = bFlip ?  (angle.y-180.f)-GetPercentVal(maxDelta/2, AntiAImPercent) : (angle.y-180.f)+GetPercentVal(maxDelta/2, AntiAImPercent);
+                AntiAim::fakeAngle.y = angle.y = bFlip ?  (angle.y-165.f)-GetPercentVal(maxDelta/2, AntiAImPercent) : (angle.y-165.f)+GetPercentVal(maxDelta/2, AntiAImPercent);
+
                 break;
 
             case AntiAimFakeType_y::Randome:
@@ -331,8 +333,9 @@ static void DefaultRageAntiAim(C_BasePlayer *const localplayer, QAngle& angle, C
                 break;
                 
             case AntiAimRealType_Y::Static:
-                 AntiAim::realAngle.y = angle.y = inverted ? (angle.y-180.f)-GetPercentVal(maxDelta/2, AntiAImPercent) : (angle.y-180.f)+GetPercentVal(maxDelta/2, AntiAImPercent);
-                break;
+                 cmd->viewangles.y = inverted ? (angle.y-180.f)-GetPercentVal(maxDelta/2, AntiAImPercent) : (angle.y-180.f)+GetPercentVal(maxDelta/2, AntiAImPercent);
+                 AntiAim::realAngle.y =  inverted ? (angle.y-180.f)-GetPercentVal(maxDelta/2, AntiAImPercent) : (angle.y-180.f)+GetPercentVal(maxDelta/2, AntiAImPercent);
+		break;
 
             case AntiAimRealType_Y::Jitter:
                 static bool bFlip = false;
@@ -349,7 +352,6 @@ static void DefaultRageAntiAim(C_BasePlayer *const localplayer, QAngle& angle, C
     // LBYBreak(AntiAim::realAngle.y, angle, localplayer);
     
 }
-
 static void FakeArrondReal(C_BasePlayer *const localplayer, QAngle& angle, CUserCmd* cmd)
 {
     using namespace Settings::AntiAim::RageAntiAim;
@@ -967,4 +969,18 @@ void AntiAim::OverrideView(CViewSetup *pSetup)
 		return;
 
     // pSetup->origin.x = localplayer->GetAbsOrigin().x + 64.0f;
+}
+void AntiAim::FireGameEvent(IGameEvent* event)
+{
+        if(!event)      return;
+
+if (strcmp(event->GetName(), XORSTR("player_hurt")) != 0)
+		return;
+int hurt_player_id = event->GetInt(XORSTR("userid"));
+if (engine->GetPlayerForUserID(hurt_player_id) != engine->GetLocalPlayer())
+		return;
+if (!Settings::AntiAim::RageAntiAim::invertOnHurt)
+		return;
+
+Settings::AntiAim::RageAntiAim::inverted = !Settings::AntiAim::RageAntiAim::inverted;
 }

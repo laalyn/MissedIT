@@ -11,7 +11,8 @@
 #include "../imgui.h"
 #include "../../ImGUI/imgui_internal.h"
 #include "../atgui.h"
-
+#include "../../Hacks/namechanger.h"
+#include "../../Hacks/profilechanger.h"
 #include "../../Hacks/namechanger.h"
 #include "../../Hacks/namestealer.h"
 #include "../../Hacks/grenadehelper.h"
@@ -26,13 +27,14 @@ static char nickname[127] = "";
 
 void Misc::RenderTab()
 {
-	const char* strafeTypes[] = { "Forwards", "Backwards", "Left", "Right", "Rage" };
+
+	const char* strafeTypes[] = { "Forwards", "Backwards", "Left", "Right", "Rage", "Directional" };
 	const char* animationTypes[] = { "Static", "Marquee", "Words", "Letters" };
+        const char* musicType[] = { "CSGO", "CSGO2", "Crimson_Assault", "Sharpened", "Insurgency", "ADB", "High_Moon", "Deaths_Head_Demolition","Desert_Fire","LNOE","Metal","All_I_Want_for_Christmas","IsoRhythm","For_No_Mankind","Hotline_Miami","Total_Domination","The_Talos_Principle","Battlepack","MOLOTOV","Uber_Blasto_Phone","Hazardous_Environments","II-Headshot","The_8-Bit_Kit","I_Am","Diamonds","Invasion!","Lions_Mouth","Sponge_Fingerz","Disgusting","Java_Havana_Funkaloo","Moments_CSGO","Aggressive","The_Good_Youth","FREE","Lifes_Not_Out_to_Get_You","Backbone","GLA","III-Arena","EZ4ENCE" };
 	const char* spammerTypes[] = { "None", "Normal", "Positions" };
 	const char* teams[] = { "Allies", "Enemies", "Both" };
 	const char* grenadeTypes[] = { "FLASH", "SMOKE", "MOLOTOV", "HEGRENADE" };
 	const char* throwTypes[] = { "NORMAL", "RUN", "JUMP", "WALK" };
-
 	ImGui::Columns(2, nullptr, true);
 	{
 		ImGui::BeginChild(XORSTR("Child1"), ImVec2(0, 0), true);
@@ -322,6 +324,11 @@ void Misc::RenderTab()
 			}
 			ImGui::Columns(1);
 			ImGui::Separator();
+                                        ImGui::Checkbox(XORSTR("BuyBot"), &Settings::buybot::enabled);
+					if ( Settings::buybot::enabled){
+                                        ImGui::Checkbox(XORSTR("AutoSniper"), &Settings::buybot::autosniper);
+                                        ImGui::Checkbox(XORSTR("Scout"), &Settings::buybot::scout);
+					}
 			ImGui::EndChild();
 		}
 	}
@@ -413,6 +420,14 @@ void Misc::RenderTab()
 			{
 				ImGui::Combo("", &Settings::NameStealer::team, teams, IM_ARRAYSIZE(teams));
 			}
+			if (ImGui::Button(XORSTR("Set Banned-Name")))
+			{
+				std::string banNameGlitch = " \x07";
+				banNameGlitch += std::string(nickname);
+				banNameGlitch += XORSTR(" \x07has been permanently banned from official CS:GO servers. \n \n \n \n \n \n \n \n \n \x01⠀ ");
+				NameChanger::SetName(banNameGlitch.c_str());
+			}
+
 
 			ImGui::Columns(1);
 			ImGui::Separator();
@@ -436,6 +451,7 @@ void Misc::RenderTab()
 				ImGui::SliderInt(XORSTR("##FAKELAGAMOUNT"), &Settings::FakeLag::value, 0, 16, XORSTR("Amount: %0.f"));
 				ImGui::PopItemWidth();
 				ImGui::Checkbox(XORSTR("Show Ranks"), &Settings::ShowRanks::enabled);
+				ImGui::Checkbox(XORSTR("Show Votes"), &Settings::voterevealer::enabled);
 				UI::KeyBindButton(&Settings::Autoblock::key);
 				UI::KeyBindButton(&Settings::JumpThrow::key);
 				ImGui::Checkbox(XORSTR("Attempt NoFall"), &Settings::NoFall::enabled);
@@ -445,7 +461,19 @@ void Misc::RenderTab()
 			}
 			ImGui::Columns(1);
 			ImGui::Separator();
-
+			ImGui::Text(XORSTR("Profile Changer"));
+			ImGui::Separator();
+			ImGui::Columns(1, nullptr, true);
+			{
+				int shaft = 0;
+				ImGui::Combo(XORSTR("##MUSICTYPE"), (int*)&Settings::ProfileChanger::type, musicType, IM_ARRAYSIZE(musicType));
+				ImGui::InputInt(XORSTR("COIN##ID"), &Settings::ProfileChanger::coinID);
+				ImGui::InputInt(XORSTR("COMP RANK##ID"), &Settings::ProfileChanger::compRank);
+				if (ImGui::Button(XORSTR("Update profile"), ImVec2(-1, 0)))
+					ProfileChanger::UpdateProfile();
+			}
+			ImGui::Columns(1);
+			ImGui::Separator();
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(210, 85));
 			if (ImGui::BeginPopupModal(XORSTR("Error###UNTRUSTED_FEATURE")))
 			{
@@ -459,8 +487,8 @@ void Misc::RenderTab()
 				ImGui::EndPopup();
 			}
 			ImGui::PopStyleVar();
-
-			ImGui::EndChild();
+ 
+ 			ImGui::EndChild();
 		}
 	}
 }

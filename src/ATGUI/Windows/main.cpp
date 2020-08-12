@@ -3,7 +3,7 @@
 #include "../../settings.h"
 #include "../../ImGUI/imgui_internal.h"
 #include "../../Utils/xorstring.h"
-
+#include "../menu_font.h"
 #include "../Tabs/legitbottab.h"
 #include "../Tabs/ragebottab.h"
 #include "../Tabs/antiaimtab.h"
@@ -56,6 +56,11 @@ static void Buttons()
 
 void Main::RenderWindow()
 {
+//ImGuiIO& io = ImGui::GetIO();
+//ImFont* font0 =  ImGui::GetIO().Fonts->AddFontDefault();
+//ImFont* font1 = io.Fonts->AddFontFromFileTTF("/usr/share/fonts/TTF/menu_font.ttf", 12);
+//io.Fonts->GetTexDataAsAlpha8();
+//ImGui::PopFont();
 	if (!Main::showWindow)
 	{
 		Settings::UI::Windows::Main::open = false;
@@ -90,15 +95,25 @@ void Main::RenderWindow()
 		temp = ImGui::GetWindowPos();
 		Settings::UI::Windows::Main::posX = (int)temp.x;
 		Settings::UI::Windows::Main::posY = (int)temp.y;
-		const char* tabs[] = {
-				"Legit Bot",
-				"Rage Bot(Beta)",
-				"Anti Aim",
-				"Visuals",
-				"Skin/Model",
-				"Misc",	
-		};
+	//	ImFont* menu_font = ImGui::GetIO().Fonts->AddFontFromMemoryCompressedTTF(menu_font_compressed_data,menu_font_compressed_size,/*Size*/ 25);
+          //      ImGui::PushFont(menu_font);
 
+		// const char* tabs[] = {
+		// 		"Legit Bot",
+		// 		"Rage Bot(Beta)",
+		// 		"Anti Aim",
+		// 		"Visuals",
+		// 		"Skin/Model",
+		// 		"Misc",
+		// };
+		const char* tabs[] = {
+				"A",
+				"B",
+				"C",
+				"D",
+				"E",
+				"F",
+		};
 		ImGui::Columns(2, nullptr, false);
 		{
 			float ButtonsXSize = ImGui::GetWindowSize().x / IM_ARRAYSIZE(tabs)-9;
@@ -113,7 +128,7 @@ void Main::RenderWindow()
 					Settings::UI::mainColor.Color().Value.z - (distance * 0.035f),
 					Settings::UI::mainColor.Color().Value.w
 				);
-
+//ImGui::PushFont(font1);
 				if (ImGui::Button(tabs[i], ImVec2( ButtonsXSize, 0)))
 					page = i;
 
@@ -124,8 +139,11 @@ void Main::RenderWindow()
 				// 	ImGui::SameLine();
 				// 	ImGui::Dummy(ImVec2(-1,-1));
 				// }
+//ImGui::PushFont(font0);
 				
 		}
+//ImGui::PopFont();
+//ImGui::PushFont(font0);
 		}
 		ImGui::NextColumn();
 		{
@@ -154,6 +172,7 @@ void Main::RenderWindow()
 				case 5:
 					Misc::RenderTab();
 					break;
+
 				}
 			}
 			ImGui::EndChild();
