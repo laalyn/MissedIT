@@ -780,6 +780,10 @@ namespace Settings
 
     namespace AntiAim
     {
+	namespace airspin
+		{
+	inline bool enabled;
+		}
 	namespace SlowWalk 
 		{
 	inline float Speed;

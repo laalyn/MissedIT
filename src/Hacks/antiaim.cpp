@@ -257,10 +257,37 @@ static void LBYBreak(float offset, QAngle& angle,C_BasePlayer* localplayer)
             }
         }
 }
+static void AirAntiAim(C_BasePlayer *const localplayer, CUserCmd* cmd)
+{
+    using namespace Settings::AntiAim::RageAntiAim;
 
+    if (!localplayer || !localplayer->GetAlive())
+        return;
+        if (localplayer->GetFlags() & FL_ONGROUND)
+                return;
+	double factor;
+factor =  360.0 / M_PHI;
+	float ang = fmodf(globalVars->curtime * factor, 360.0);
+      float maxDelta = AntiAim::GetMaxDelta(localplayer->GetAnimState());
+
+    if(AntiAim::bSend)
+    {
+                AntiAim::fakeAngle.y = cmd->viewangles.y = inverted ? (ang)+GetPercentVal(maxDelta/2, AntiAImPercent) : (ang)-GetPercentVal(maxDelta/2, AntiAImPercent);
+    }     
+    else
+    {     
+                 cmd->viewangles.y = inverted ? (ang)-GetPercentVal(maxDelta/2, AntiAImPercent) : (ang)+GetPercentVal(maxDelta/2, AntiAImPercent);
+                 AntiAim::realAngle.y =  inverted ? (ang)-GetPercentVal(maxDelta/2, AntiAImPercent) : (ang)+GetPercentVal(maxDelta/2, AntiAImPercent);
+    }
+
+}
 static void DefaultRageAntiAim(C_BasePlayer *const localplayer, QAngle& angle, CUserCmd* cmd)
 {
     using namespace Settings::AntiAim::RageAntiAim;
+
+    if (!(localplayer->GetFlags() & FL_ONGROUND) && Settings::AntiAim::airspin::enabled)
+        return;
+
     if (!localplayer || !localplayer->GetAlive())
         return;
 
@@ -931,7 +958,10 @@ void AntiAim::CreateMove(CUserCmd* cmd)
         }       
 
         DoAntiAimX(angle); // changing the x View Angle
-    }
+ if (Settings::AntiAim::airspin::enabled) {
+	AirAntiAim(localplayer,cmd);
+	}
+	}
     else if (Settings::AntiAim::LegitAntiAim::enable) // Responsible for legit anti aim activated when the legit anti aim is enabled
         DoLegitAntiAim(localplayer, angle, AntiAim::bSend, cmd);
     

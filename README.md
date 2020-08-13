@@ -4,12 +4,14 @@
 <img src="./Pictures/missedit.png">
 </p>
 ===================
-
+#TODO
+Fix these stupid crashes.
+Add doubletap / tickbase shift exploits 
+Fix all the grammatical errors from original MissedIt
+Improve resolver
+===================
 # MissedIT
 <b> This branch is quite brocken now I want to try test branch untill I commit that code to master thanks :)</b>
-* To get Stable Updates with Bug Fixes Use Master Branch<a href = https://github.com/HackerPolice/MissedIT >MissedIT</a>. 
-
-# It looks like we are starting to get detected. Use public forks at your own Risk! 
 
 Want to chat or play with other MissedIT users? Join us on Discord :- <a href = https://discord.gg/PDtg8hd><b>Hacker.Police Discord</b></a>
 

@@ -112,7 +112,21 @@ static void CheckActiveSounds() {
     sounds.m_Size = 0; // Setting this to 0 makes it use the same memory each time instead of grabbing more.
 }
 
-// credits to Casual_Hacker from UC for this method (I modified it a lil bit)
+static void DrawManualAntiaim()
+{
+    if (Settings::AntiAim::ManualAntiAim::Enable)
+    {
+        if (AntiAim::ManualAntiAim::alignLeft) {
+ Draw::Text( Paint::engineWidth / 2 , Paint::engineHeight / 2 , "<" , astrium,Color::FromImColor( Settings::ESP::enemyInfoColor.Color()) );
+
+        } else if (AntiAim::ManualAntiAim::alignBack) {
+
+        } else if (AntiAim::ManualAntiAim::alignRight) {
+
+        }
+    }
+
+}
 static float GetArmourHealth(float flDamage, int ArmorValue)
 {
 	float flCurDamage = flDamage;
@@ -716,36 +730,26 @@ int c = y;
 C_BasePlayer* localplayer = (C_BasePlayer*) entityList->GetClientEntity(engine->GetLocalPlayer());
 		int width, height;
 engine->GetScreenSize(width,height);
-		//260
-// 		Draw::AddRectFilled(1653 + 73, 2, 1653 + 260, 30, ImColor(40, 40, 40, 225));
-// 		Draw::AddRectFilled(1653 + 5 + 73, 1 + 5, 1653 + 255, 30 - 5, ImColor(10, 10, 10, 225));
-// 		Draw::AddRect(1653 - 1 + 73, 1, 1653 + 261, 31, ImColor(200, 200, 200, 50));
-// 		Draw::AddRect(1652 + 5 + 73, 1 + 5, 1653 + 256, 31 - 5, ImColor(200, 200, 200, 50));
-// 		Draw::AddLine(1653 + 6 + 73, 1 + 5, 1653 + 254, 1 + 5, Settings::ESP::Chams::Arms::color.Color());
-// int fps = static_cast< int >( 1.f / globalVars->frametime );
-//               std::string fps_string = std::to_string(fps);
-// //std::string name = "eyehook | " + fps_string + " fps | 39ms";
-// std::string name = "eye     | " + fps_string + " fps | 39ms";
+Vector2D nameSize = Draw::GetTextSize(XORSTR("AntiAim Inverter [Toggled]"), esp_font);
+    Draw::AddRectFilled(x - 5, y - 5, x + nameSize.x , y + 10, ImColor(40, 40, 40, 225));
 
-// Draw::AddText(1653 + 10 + 73, 11, name.c_str(), ImColor( 255, 255, 255, 255 ) );
-// Draw::AddText(1653 + 10 + 73 + 21, 11, "hook", ImColor( 255, 166, 14, 255 ) );
-Vector2D nameSize = Draw::GetTextSize(XORSTR("MissedIt | 127.0.0.1 | delay: 25ms | 64tick | 05/08/2020"), esp_font);
-//Vector2D nameSize = Draw::GetTextSize(XORSTR("onetap"), esp_font);
-//Draw::AddRectFilled( x - 1, y - 35, 203, y + 19, ImColor( 0, 0, 0, 199 ) );
-//Draw::AddRectFilled(1736 * 0.99 - nameSize.x, 8, nameSize.x + 10, 23, ImColor( 56, 60, 67, 255 ) );
-//Draw::AddText(5, 12, "MissedIt | 127.0.0.1 | delay: 25ms | 64tick | 05/08/2020", ImColor( 255, 255, 255, 255 ) );
 if (inputSystem->IsButtonDown(Settings::Autoblock::key) && Settings::Autoblock::enabled){
-                Draw::AddText( x, y, "AutoBlock [Enabled]", ImColor( 255, 0, 255, 255 ) );
+                Draw::AddText( x, y, "AutoBlock [Holding]", ImColor( 255, 0, 255, 255 ) );
 y = y + 10;
 }
 if (inputSystem->IsButtonDown(Settings::AntiAim::SlowWalk::key) && Settings::AntiAim::SlowWalk::enabled){
-                Draw::AddText( x, y, "SlowWalk [Enabled]", ImColor( 255, 0, 255, 255 ) );
+                Draw::AddText( x, y, "SlowWalk [Holding]", ImColor( 255, 0, 255, 255 ) );
 y = y + 10;
 }
 if (Settings::AntiAim::RageAntiAim::inverted && Settings::AntiAim::RageAntiAim::enable){
                 Draw::AddText( x, y, "AntiAim Inverter [Toggled]", ImColor( 255, 0, 255, 255 ) );
 y = y + 10;
 }
+if (inputSystem->IsButtonDown(Settings::AntiAim::FakeDuck::fakeDuckKey) && Settings::AntiAim::FakeDuck::enabled){
+                Draw::AddText( x, y, "FakeDuck [Holding]", ImColor( 255, 0, 255, 255 ) );
+y = y + 10;
+}
+               // Draw::AddRectFilled(1653 + 5 + 73, 1 + 5, 1653 + 255, 30 - 5, ImColor(10, 10, 10, 225));
 
 
 }
@@ -851,7 +855,7 @@ static void DrawPlayerText( C_BasePlayer* player, C_BasePlayer* localplayer, int
         //Vector2D rankSize = Draw::GetTextSize( "Resolving: Rage AA", esp_font );
         //Draw::AddText( ( x + ( w / 2 ) - ( rankSize.x / 2 ) ),( y - ( textSize.y * lineNum ) - nameOffset ), "Resolving: Rage AA", Entity::IsTeamMate(player, localplayer) ? Settings::ESP::allyInfoColor.Color() : Settings::ESP::enemyInfoColor.Color() );
         //}
-	//else if (Settings::Resolver::manual && !(Entity::IsTeamMate(player, localplayer))){
+	//else if (Settings::Resolver::	manual && !(Entity::IsTeamMate(player, localplayer))){
 	//Vector2D rankSize = Draw::GetTextSize( "Manual Resolver", esp_font );
         //Draw::AddText( ( x + ( w / 2 ) - ( rankSize.x / 2 ) ),( y - ( textSize.y * lineNum ) - nameOffset ), "Manual Resolver", Entity::IsTeamMate(player, localplayer) ? Settings::ESP::allyInfoColor.Color() : Settings::ESP::enemyInfoColor.Color() );	
 	//}
@@ -897,8 +901,8 @@ return;
 		std::string modelName;
 		int offset = ( int ) ( boxSpacing);
 
-		if (activeeWeapon == ItemDefinitionIndex::WEAPON_KNIFE_T)
-			 modelName =  ("[");
+		if (activeeWeapon == ItemDefinitionIndex::WEAPON_KNIFE_KARAMBIT)
+			 modelName =  ("4");
 		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_DEAGLE)
 			 modelName =  ("A");
 		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_AUG)
@@ -1019,7 +1023,10 @@ return;
         
 		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_FLASHBANG)
 			 modelName =  ("i");
-        
+
+                else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_KNIFE)
+                         modelName =  ("1");
+
 		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_DECOY)
 			 modelName =  ("m");
                                 Vector2D weaponTextSizeF = Draw::GetTextSize(modelName.c_str() , astrium );
@@ -1850,6 +1857,11 @@ void ESP::Paint()
 		DrawScope();
 
 		DrawWatermark(localplayer);
+ if (Settings::AntiAim::ManualAntiAim::Enable)
+    {
+
+		DrawManualAntiaim();
+}
 }
 
 void ESP::DrawModelExecute()

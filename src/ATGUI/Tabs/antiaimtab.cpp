@@ -235,6 +235,8 @@ if (Settings::AntiAim::SlowWalk::enabled){
                         ImGui::Checkbox(XORSTR("Double Tap"), &Settings::Ragebot::DoubleTap);
 
             ImGui::Checkbox(XORSTR("FakeDuck"), &Settings::AntiAim::FakeDuck::enabled);
+        ImGui::SameLine(); 
+            UI::KeyBindButton(&Settings::AntiAim::FakeDuck::fakeDuckKey);
 	    ImGui::Checkbox(XORSTR("Manual Resolver"), &Settings::Resolver::manual);
 	if (Settings::Resolver::manual){
             ImGui::Checkbox(XORSTR("Force Bruteforce"), &Settings::Resolver::forcebrute);
@@ -243,8 +245,8 @@ if (Settings::AntiAim::SlowWalk::enabled){
             ImGui::SliderFloat(XORSTR("##EYEANGLES"), &Settings::Resolver::EyeAngles, -60, 60, XORSTR("Amount: %0.f"));
 						}
 	}
-            ImGui::SameLine(); 
-            UI::KeyBindButton(&Settings::AntiAim::FakeDuck::fakeDuckKey);
+            ImGui::Checkbox(XORSTR("AirSpin"), &Settings::AntiAim::airspin::enabled);
+
             ImGui::EndChild();
         }
     }
