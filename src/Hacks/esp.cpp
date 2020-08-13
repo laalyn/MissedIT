@@ -1857,6 +1857,10 @@ void ESP::Paint()
 		DrawScope();
 
 		DrawWatermark(localplayer);
+	if(Settings::ESP::showimpacts){
+	ConVar* cvar_name = cvar->FindVar(XORSTR("sv_showimpacts"));
+	cvar_name->SetValue(1);
+	}
  if (Settings::AntiAim::ManualAntiAim::Enable)
     {
 

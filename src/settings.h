@@ -867,6 +867,7 @@ namespace Settings
 
 	namespace ESP
 	{
+		inline bool showimpacts;
 		inline bool KeyBinds = false;
 	namespace keybi
 	{
@@ -1448,6 +1449,7 @@ namespace Settings
 	}
 	namespace Skinchanger
 	{
+	inline std::string PlayerModel = "models/player/custom_player/legacy/ctm_st6_varianti.mdl";
 		namespace Skins
 		{
 			inline bool enabled = false;

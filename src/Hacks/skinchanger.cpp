@@ -48,7 +48,7 @@ void SkinChanger::FrameStageNotifyModels(ClientFrameStage_t stage)
 			static int originalIdx = 0;
 			if (stage == ClientFrameStage_t::FRAME_RENDER_START)
 				originalIdx = *localplayer->GetModelIndex(); 
-			const auto idx = stage == ClientFrameStage_t::FRAME_RENDER_END && originalIdx ? originalIdx : modelInfo->GetModelIndex(XORSTR("models/player/custom_player/legacy/ctm_st6_varianti.mdl"));
+			const auto idx = stage == ClientFrameStage_t::FRAME_RENDER_END && originalIdx ? originalIdx : modelInfo->GetModelIndex(Settings::Skinchanger::PlayerModel.c_str());
     		localplayer->SetModelIndex(idx);
 		}
 		

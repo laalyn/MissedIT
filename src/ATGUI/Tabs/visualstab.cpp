@@ -434,6 +434,7 @@ void Visuals::RenderTab()
                                 ImGui::SliderInt(XORSTR("##Y"), &Settings::ESP::keybi::y, 0, 1080, XORSTR("Y: %0.f"));
 							}
 				ImGui::Checkbox(XORSTR("Watermark"), &Settings::ESP::Watermark::enabled);
+				ImGui::Checkbox(XORSTR("Show Impacts"), &Settings::ESP::showimpacts);
 				if ( ImGui::Button( XORSTR( "Material Config" ), ImVec2( -1, 0 ) ) )
 					ImGui::OpenPopup( XORSTR( "##MaterialConfigWindow" ) );
 				SetTooltip( XORSTR( "Advanced CSGO Gfx Settings\nExperimental" ) );
