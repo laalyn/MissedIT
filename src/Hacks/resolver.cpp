@@ -199,8 +199,8 @@ void Resolver::FrameStageNotify(ClientFrameStage_t stage)
 			if (!Settings::Resolver::manual){
 			if (player->GetEyeAngles()->x < 65.f || player->GetEyeAngles()->x > 90.f)
 			{
-				 cvar->ConsoleDPrintf(XORSTR("Resolving : Legit AA"));
-				 cvar->ConsoleDPrintf(XORSTR("MissedShots : %d\n"), players[player->GetIndex()].MissedCount);
+				 //cvar->ConsoleDPrintf(XORSTR("Resolving : Legit AA"));
+				 //cvar->ConsoleDPrintf(XORSTR("MissedShots : %d\n"), players[player->GetIndex()].MissedCount);
 				float trueDelta = NormalizeAsYaw(*player->GetLowerBodyYawTarget() - player->GetEyeAngles()->y);
 
 				switch(Resolver::players[player->GetIndex()].MissedCount)
@@ -244,8 +244,8 @@ void Resolver::FrameStageNotify(ClientFrameStage_t stage)
 					
 
 
-				cvar->ConsoleDPrintf(XORSTR("Resolving : Rage AA\n"));
-				cvar->ConsoleDPrintf(XORSTR("MissedShots : %d\n"), players[player->GetIndex()].MissedCount);
+				//cvar->ConsoleDPrintf(XORSTR("Resolving : Rage AA\n"));
+				//cvar->ConsoleDPrintf(XORSTR("MissedShots : %d\n"), players[player->GetIndex()].MissedCount);
 				        float angle = GetAngle(player);
 				float fuck = 90;
                 bool forward = fabsf(NormalizeAsYaw(GetAngle(player) - GetForwardYaw(player))) < 90.f;

@@ -890,16 +890,12 @@ static void DrawPlayerText( C_BasePlayer* player, C_BasePlayer* localplayer, int
 
 	// weapon
 	C_BaseCombatWeapon* activeWeapon = ( C_BaseCombatWeapon* ) entityList->GetClientEntityFromHandle( player->GetActiveWeapon() );
-	if ( Settings::ESP::Info::weapon && activeWeapon ) {
+	if ( Settings::ESP::Info::weapon) {
+	 if (!localplayer->GetAlive())
+return;
 		auto activeeWeapon =  *activeWeapon->GetItemDefinitionIndex();
 		std::string modelName;
-		int offset = ( int ) ( Settings::ESP::Bars::type == BarType::HORIZONTAL ||
-							   Settings::ESP::Bars::type == BarType::INTERWEBZ ? boxSpacing + barsSpacing.y + 1 : 0 );
-
-		//HFont icons = Fonts::CreateFont("csgo_icons", 25, 0);
-		//Draw::Text( x + w + boxSpacing, ( y + h - (textSize.y / 3) ), \uE001, icon_font,Color::FromImColor( Entity::IsTeamMate(player, localplayer) ? Settings::ESP::allyInfoColor.Color() : Settings::ESP::enemyInfoColor.Color()) );
-		//Vector2D weaponTextSize = Draw::GetTextSize( modelName.c_str(), esp_font );
-		//Draw::AddText( ( x + ( w / 2 ) - ( weaponTextSize.x / 2 ) ), y + h + offset, modelName.c_str(), Entity::IsTeamMate(player, localplayer) ? Settings::ESP::allyInfoColor.Color() : Settings::ESP::enemyInfoColor.Color() );
+		int offset = ( int ) ( boxSpacing);
 
 		if (activeeWeapon == ItemDefinitionIndex::WEAPON_KNIFE_T)
 			 modelName =  ("[");
@@ -1249,13 +1245,17 @@ static void DrawPlantedBomb(C_PlantedC4* bomb, C_BasePlayer* localplayer)
                 Vector2D nameSize = Draw::GetTextSize(st.c_str(), esp_font);
 		Draw::AddText(bombTimer * 50 - nameSize.x, 0, st.c_str()  , ImColor( 255, 255, 255, 255 ) );
 
+
 	if( bomb->GetBombDefuser() != -1 ){
                 Draw::AddRectFilled(-1920, -15, defuseTimer * 50, 15, ImColor( 0, 0, 255, 150 ) );
                 //Draw::AddText( XORSTR("") << defuseTimer * 50, -15, XORSTR("") << defuseTimer, ImColor( 0, 0, 0, 255 ) );
 
 	}
 	}
-
+        int x, y, w, h;
+GetBox( bomb, x, y, w, h );
+                               Vector2D weaponTextSizeF = Draw::GetTextSize("o" , astrium );
+                Draw::Text( x + ( w / 2 ) - ( weaponTextSizeF.x / 2)  , y + h + 2, "o", astrium,Color::FromImColor(ImColor( 255, 255, 255, 255 )));
 	DrawEntity(bomb, displayText.str().c_str(), color);
 }
 

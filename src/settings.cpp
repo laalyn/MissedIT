@@ -651,6 +651,9 @@ void Settings::LoadDefaultsOrSave(std::string path)
     settings[XORSTR("FakeLag")][XORSTR("enabled")] = Settings::FakeLag::enabled;
     settings[XORSTR("FakeLag")][XORSTR("value")] = Settings::FakeLag::value;
     settings[XORSTR("FakeLag")][XORSTR("adaptive")] = Settings::FakeLag::adaptive;
+    settings[XORSTR("FakeLag")][XORSTR("randomLag")] = Settings::AntiAim::randomLag::enabled;
+
+    settings[XORSTR("SlowWalk")][XORSTR("enabled")] = Settings::AntiAim::SlowWalk::enabled;
 
     settings[XORSTR("AutoAccept")][XORSTR("enabled")] = Settings::AutoAccept::enabled;
 
@@ -1333,6 +1336,9 @@ void Settings::LoadConfig(std::string path)
     GetVal(settings[XORSTR("FakeLag")][XORSTR("enabled")], &Settings::FakeLag::enabled);
     GetVal(settings[XORSTR("FakeLag")][XORSTR("value")], &Settings::FakeLag::value);
     GetVal(settings[XORSTR("FakeLag")][XORSTR("adaptive")], &Settings::FakeLag::adaptive);
+    GetVal(settings[XORSTR("FakeLag")][XORSTR("randomLag")], &Settings::AntiAim::randomLag::enabled);
+
+    GetVal(settings[XORSTR("SlowWalk")][XORSTR("enabled")], &Settings::AntiAim::SlowWalk::enabled);
 
     GetVal(settings[XORSTR("AutoAccept")][XORSTR("enabled")], &Settings::AutoAccept::enabled);
 
