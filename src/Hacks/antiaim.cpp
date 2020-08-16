@@ -143,7 +143,7 @@ static float GetBestHeadAngle(CUserCmd* cmd)
     return yaw;
 	
 }
-/*
+
 static bool GetBestHeadAngle(CUserCmd* cmd, QAngle& angle)
 {
     float b, r, l;
@@ -167,9 +167,9 @@ static bool GetBestHeadAngle(CUserCmd* cmd, QAngle& angle)
 
 	auto GetTargetEntity = [ & ] ( void )
 	{
-		float bestFov = FLT_MAX;
-		C_BasePlayer* bestTarget = NULL;
 
+int bestDamage = localplayer->GetHealth();
+		C_BasePlayer* bestTarget = nullptr;
 		for( int i = 0; i < engine->GetMaxClients(); ++i )
 		{
 			C_BasePlayer* player = (C_BasePlayer*) entityList->GetClientEntity(i);
@@ -182,11 +182,15 @@ static bool GetBestHeadAngle(CUserCmd* cmd, QAngle& angle)
 				|| player->GetTeam() == localplayer->GetTeam())
 				continue;
 
-			float fov = Math::GetFov(viewAngles, Math::CalcAngle(localplayer->GetEyePosition(), player->GetEyePosition()));
+			//float fov = Math::GetFov(viewAngles, Math::CalcAngle(localplayer->GetEyePosition(), player->GetEyePosition()));
 
-			if( fov < bestFov )
+     AutoWall::FireBulletData data;
+            int damage = AutoWall::GetDamage(player, localplayer->GetEyePosition(), true, data);
+
+            if (damage < 0) continue;
+			else if( damage >= bestDamage )
 			{
-				bestFov = fov;
+ 				bestDamage = damage;
 				bestTarget = player;
 			}
 		}
@@ -194,12 +198,12 @@ static bool GetBestHeadAngle(CUserCmd* cmd, QAngle& angle)
 		return bestTarget;
 	};
 
-	auto target = GetTargetEntity();
+ 	C_BasePlayer* target = GetTargetEntity();
 	filter.pSkip = localplayer;
 	src3D = localplayer->GetEyePosition();
 	dst3D = src3D + (forward * 384);
 
-	if (!target)
+	if (target == nullptr)
 		return false;
 
 	ray.Init(src3D, dst3D);
@@ -232,7 +236,7 @@ static bool GetBestHeadAngle(CUserCmd* cmd, QAngle& angle)
 
 	return true;
 }
-*/
+
 static void LBYBreak(float offset, QAngle& angle,C_BasePlayer* localplayer)
 {
     static bool lbyBreak = false;
@@ -309,10 +313,8 @@ static void DefaultRageAntiAim(C_BasePlayer *const localplayer, QAngle& angle, C
     if (Settings::AntiAim::HeadEdge::enabled)    {
         
         // if (GetBestHeadAngle(cmd, angle))
-        float headAngle = GetBestHeadAngle(cmd);
-        if (headAngle > 0)
-            AntiAim::fakeAngle.y = AntiAim::realAngle.y = angle.y = GetBestHeadAngle(cmd);
-        return;
+ bool headAngle = GetBestHeadAngle(cmd, angle);
+        if (headAngle) return;
     }
     
     static bool buttonToggle = false;
@@ -402,11 +404,8 @@ static void FakeArrondReal(C_BasePlayer *const localplayer, QAngle& angle, CUser
 
     
     if (Settings::AntiAim::HeadEdge::enabled){
-        // if (GetBestHeadAngle(cmd, angle))
-        float headAngle = GetBestHeadAngle(cmd);
-        if (headAngle > 0)
-            AntiAim::fakeAngle.y = AntiAim::realAngle.y = angle.y = GetBestHeadAngle(cmd);
-            return;
+   bool headAngle = GetBestHeadAngle(cmd, angle);
+        if (headAngle) return;
     }
     
     static bool buttonToggle = false;
@@ -784,27 +783,8 @@ static void DoLegitAntiAim(C_BasePlayer *const localplayer, QAngle& angle, bool&
             AntiAim::fakeAngle = angle;
     });
     static auto Experimental([&](){
-         if (!AntiAim::bSend)
-        {
-            static bool bFlip = false;
-            bFlip = !bFlip;
-            if (inverted)
-            {
-                AntiAim::realAngle.y = angle.y = bFlip ? angle.y-maxDelta-30.f : angle.y-maxDelta-1; 
-            }
-            else
-            {
-                AntiAim::realAngle.y = angle.y = bFlip ? angle.y+maxDelta+30.f : angle.y+maxDelta-1; 
-            }
-            // localplayer->GetAnimState()->goalFeetYaw = inverted ? maxDelta*-1 : maxDelta;
-            // AntiAim::realAngle.y = angle.y += inverted ? maxDelta : maxDelta*-1;
-        }
-        else{
-            // localplayer->GetAnimState()->goalFeetYaw = inverted ? maxDelta*-1 : maxDelta;
-            AntiAim::fakeAngle = angle;
-        }
-            
-        inverted ? LBYBREAK(AntiAim::fakeAngle.y) : LBYBREAK(AntiAim::fakeAngle.y);     
+  AntiAim::fakeAngle.y = *localplayer->GetLowerBodyYawTarget() = inverted ? angle.y - maxDelta : angle.y + maxDelta;
+        inverted ? LBYBREAK(AntiAim::fakeAngle.y) : LBYBREAK(AntiAim::fakeAngle.y);
     });
 
     switch (Settings::AntiAim::LegitAntiAim::legitAAtype)
@@ -985,7 +965,28 @@ void AntiAim::CreateMove(CUserCmd* cmd)
 
 void AntiAim::FrameStageNotify(ClientFrameStage_t stage)
 {
+   if (!Settings::AntiAim::LegitAntiAim::enable)
+        return;
 
+    C_BasePlayer* localplayer = (C_BasePlayer*) entityList->GetClientEntity(engine->GetLocalPlayer());
+    if (!localplayer || !localplayer->GetAlive())
+        return;
+
+    if (stage == ClientFrameStage_t::FRAME_NET_UPDATE_POSTDATAUPDATE_START)
+    {
+        if (Settings::AntiAim::LegitAntiAim::legitAAtype == LegitAAType::Experimental)
+        {
+            using namespace Settings::AntiAim::LegitAntiAim;
+            static bool buttonToggle = false;
+
+            float maxDelta = AntiAim::GetMaxDelta( localplayer->GetAnimState( ) );
+
+            QAngle angle;
+                engine->GetViewAngles( angle );
+
+            AntiAim::realAngle.y = localplayer->GetAnimState( )->goalFeetYaw = inverted ? angle.y + 27.f : angle.y - 27.f;
+        }
+    }
 }
 
 void AntiAim::OverrideView(CViewSetup *pSetup)

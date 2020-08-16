@@ -11,7 +11,7 @@ static void fakeDuck(CUserCmd* cmd )
 	if (!Settings::AntiAim::FakeDuck::enabled)
 		return;
 
-	if (!inputSystem->IsButtonDown(ButtonCode_t::KEY_LCONTROL))
+	if (!inputSystem->IsButtonDown(Settings::AntiAim::FakeDuck::fakeDuckKey))
 		return;
 
 	cmd->buttons |= IN_BULLRUSH;
@@ -28,6 +28,8 @@ static void randomLag(CUserCmd* cmd )
                 return;
 	if (Settings::FakeLag::adaptive)
 		return;
+        if (Settings::AntiAim::FakeDuck::enabled && inputSystem->IsButtonDown(Settings::AntiAim::FakeDuck::fakeDuckKey))
+                return;
 
 Settings::FakeLag::value = random_int(1, 14);
 }
