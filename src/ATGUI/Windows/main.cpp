@@ -118,6 +118,7 @@ void Main::RenderWindow()
 		{
 			float ButtonsXSize = ImGui::GetWindowSize().x / IM_ARRAYSIZE(tabs)-9;
 			ImGui::SetColumnOffset(1, ButtonsXSize);
+
 			for (int i = 0; i < IM_ARRAYSIZE(tabs); i++)
 			{
 				int distance = i == page ? 0 : i > page ? i - page : page - i;

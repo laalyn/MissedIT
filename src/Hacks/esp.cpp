@@ -900,135 +900,53 @@ return;
 		auto activeeWeapon =  *activeWeapon->GetItemDefinitionIndex();
 		std::string modelName;
 		int offset = ( int ) ( boxSpacing);
-
-		if (activeeWeapon == ItemDefinitionIndex::WEAPON_KNIFE_KARAMBIT)
-			 modelName =  ("4");
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_DEAGLE)
-			 modelName =  ("A");
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_AUG)
-			 modelName =  ("U");
-			
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_G3SG1)
-			 modelName =  ("X");
-			
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_MAC10)
-			 modelName =  ("K");
-			
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_P90)
-			 modelName =  ("P");
-			
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_SSG08)
-			 modelName =  ("a");
-        
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_SCAR20)
-			 modelName =  ("Y");
-        
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_UMP45)
-			 modelName =  ("L");
-        
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_ELITE)
-			 modelName =  ("B");
-        
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_FAMAS)
-			 modelName =  ("R");
-        
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_FIVESEVEN)
-			 modelName =  ("C");
-        
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_GALILAR)
-			 modelName =  ("Q");
-        
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_M4A1_SILENCER)
-			 modelName =  ("T");
-        
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_M4A1)
-			 modelName =  ("S");
-        
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_P250)
-			 modelName =  ("F");
-        
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_M249)
-			 modelName =  ("g");
-        
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_XM1014)
-			 modelName =  ("b");
-        
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_GLOCK)
-			 modelName =  ("D");
-        
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_USP_SILENCER)
-			 modelName =  ("G");
-        
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_HKP2000)
-			 modelName =  ("E");
-        
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_AK47)
-			 modelName =  ("W");
-        
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_AWP)
-			 modelName =  ("Z");
-        
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_BIZON)
-			 modelName =  ("M");
-        
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_MAG7)
-			 modelName =  ("d");
-        
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_NEGEV)
-			 modelName =  ("f");
-        
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_SAWEDOFF)
-			 modelName =  ("c");
-        
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_TEC9)
-			 modelName =  ("H");
-        
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_TASER)
-			 modelName =  ("h");
-        
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_NOVA)
-			 modelName =  ("e");
-        
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_CZ75A)
-			 modelName =  ("I");
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_SG556)
-			 modelName =  ("V");
-        
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_REVOLVER)
-			 modelName =  ("J");
-        
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_MP7)
-			 modelName =  ("N");
-        
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_MP9)
-			 modelName =  ("O");
-        
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_MP5)
-			 modelName =  ("L");
-        
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_C4)
-			 modelName =  ("o");
-        
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_FRAG_GRENADE)
-			 modelName =  ("j");
-        
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_SMOKEGRENADE)
-			 modelName =  ("k");
-        
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_MOLOTOV)
-			 modelName =  ("l");
-        
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_INCGRENADE)
-			 modelName =  ("n");
-        
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_FLASHBANG)
-			 modelName =  ("i");
-
-                else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_KNIFE)
-                         modelName =  ("1");
-
-		else if (activeeWeapon ==  ItemDefinitionIndex::WEAPON_DECOY)
-			 modelName =  ("m");
+    std::map<ItemDefinitionIndex, std::string> Weaponsi;
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_KNIFE_KARAMBIT, "4"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_DECOY,"m"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_AUG,"U"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_G3SG1,"X"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_MAC10,"K"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_P90,"P"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_SSG08,"a"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_SCAR20,"Y"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_UMP45,"L"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_ELITE,"B"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_FAMAS,"R"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_FIVESEVEN,"C"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_GALILAR,"Q"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_M4A1_SILENCER,"T"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_M4A1,"S"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_P250,"F"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_M249,"g"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_XM1014,"b"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_GLOCK,"D"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_USP_SILENCER,"G"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_HKP2000,"E"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_AK47,"W"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_AWP,"Z"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_BIZON,"M"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_MAG7,"d"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_NEGEV,"f"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_SAWEDOFF,"c"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_TEC9,"H"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_TASER,"h"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_NOVA,"e"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_CZ75A,"I"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_SG556,"V"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_REVOLVER,"J"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_MP7,"N"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_MP9,"O"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_MP5,"L"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_C4,"o"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_FRAG_GRENADE,"j"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_SMOKEGRENADE,"k"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_MOLOTOV,"l"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_INCGRENADE,"n"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_FLASHBANG,"i"));
+Weaponsi.insert(std::make_pair(ItemDefinitionIndex::WEAPON_KNIFE,"1"));
+if ( Weaponsi.find(activeeWeapon) != Weaponsi.end()){
+modelName = Weaponsi.find(activeeWeapon)->second;
+}
                                 Vector2D weaponTextSizeF = Draw::GetTextSize(modelName.c_str() , astrium );
 		Draw::Text( ( x + ( w / 2 ) - ( weaponTextSizeF.x / 2 ) ), y + h + offset, modelName.c_str(), astrium,Color::FromImColor( Entity::IsTeamMate(player, localplayer) ? Settings::ESP::allyInfoColor.Color() : Settings::ESP::enemyInfoColor.Color()) );
 
