@@ -381,6 +381,29 @@ static void DefaultRageAntiAim(C_BasePlayer *const localplayer, QAngle& angle, C
     // LBYBreak(AntiAim::realAngle.y, angle, localplayer);
     
 }
+static void JitterAntiAim(C_BasePlayer *const localplayer, QAngle& angle, CUserCmd* cmd)
+{
+
+    if (!localplayer || !localplayer->GetAlive())
+        return;
+QAngle anglei;
+           C_BasePlayer* lockedTarget = GetClosestEnemy(cmd);
+            if (lockedTarget)
+               anglei = Math::CalcAngle(localplayer->GetEyePosition(), lockedTarget->GetEyePosition());
+            
+  
+
+  if(AntiAim::bSend)
+    {
+ float randNum = (rand()%(20-(-20) + 1) + -20);
+ AntiAim::fakeAngle.y = angle.y = AntiAim::realAngle.y += randNum;
+
+}
+else {
+AntiAim::realAngle.y = angle.y += Settings::AntiAim::RageAntiAim::offset;
+
+}
+}
 static void FakeArrondReal(C_BasePlayer *const localplayer, QAngle& angle, CUserCmd* cmd)
 {
     using namespace Settings::AntiAim::RageAntiAim;
@@ -711,7 +734,20 @@ static void FreeStand(C_BasePlayer *const localplayer, QAngle& angle, CUserCmd* 
 
 static void DoAntiAimX(QAngle& angle)   
 { 
+    if (Settings::AntiAim::RageAntiAim::pitchJitter){
+    if(AntiAim::bSend)
+    {
+ float randNum = (rand()%(-70-(-89) + 1) + -89);
+ AntiAim::fakeAngle.x = angle.x = AntiAim::realAngle.x = -89.f;
+
+	}
+	else{
+    AntiAim::realAngle.x = angle.x = 89.f;
+		}
+	}
+	else{
     AntiAim::fakeAngle.x = AntiAim::realAngle.x = angle.x = 89.f;
+	}
 }
 
 static void DoLegitAntiAim(C_BasePlayer *const localplayer, QAngle& angle, bool& bSend, CUserCmd* cmd)
@@ -932,6 +968,9 @@ void AntiAim::CreateMove(CUserCmd* cmd)
                 break;
             case RageAntiAimType::FreeStand:
                 FreeStand(localplayer, angle, cmd);
+                break;
+            case RageAntiAimType::JitterAntiAim:
+                JitterAntiAim(localplayer,angle,cmd);
                 break;
             default:
                 break;

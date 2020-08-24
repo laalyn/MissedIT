@@ -36,7 +36,7 @@ Settings::FakeLag::value = random_int(1, 14);
 
 void FakeLag::CreateMove(CUserCmd* cmd)
 {
-	// fakeDuck( cmd ); // for fake ducking don't ask my why here
+	fakeDuck( cmd ); // for fake ducking don't ask my why here
 
 	if (!Settings::FakeLag::enabled)
 		return;

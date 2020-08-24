@@ -860,6 +860,12 @@ static void DrawPlayerText( C_BasePlayer* player, C_BasePlayer* localplayer, int
         //Draw::AddText( ( x + ( w / 2 ) - ( rankSize.x / 2 ) ),( y - ( textSize.y * lineNum ) - nameOffset ), "Manual Resolver", Entity::IsTeamMate(player, localplayer) ? Settings::ESP::allyInfoColor.Color() : Settings::ESP::enemyInfoColor.Color() );	
 	//}
 	//}
+	if( Settings::Resolver::resolveAll && !(Entity::IsTeamMate(player,localplayer)) && Settings::Resolver::manual){
+ 		                std::string bombStr = "Max Desync Delta " + std::to_string(AntiAim::GetMaxDelta(player->GetAnimState()));
+		Vector2D rankSize = Draw::GetTextSize( bombStr.c_str(), esp_font );
+                Draw::AddText( ( x + ( w / 2 ) - ( rankSize.x / 2 ) ),( y - ( textSize.y * lineNum ) - nameOffset ), bombStr.c_str(), Entity::IsTeamMate(player, localplayer) ? Settings::ESP::allyInfoColor.Color() : Settings::ESP::enemyInfoColor.Color() );
+                lineNum++;
+		}
 	// draw steamid
 	if ( Settings::ESP::Info::steamId ) {
 		IEngineClient::player_info_t playerInfo;

@@ -320,7 +320,9 @@ void Resolver::FrameStageNotify(ClientFrameStage_t stage)
 			player->GetEyeAngles()->y += Settings::Resolver::EyeAngles;
 			}else if ( Settings::Resolver::forcebrute){
  float trueDelta = NormalizeAsYaw(*player->GetLowerBodyYawTarget() - player->GetEyeAngles()->y);
-                                        float randNum = rand()%(60-(-60) + 1) + -60;
+ float maxDesync = AntiAim::GetMaxDelta(player->GetAnimState());
+ int mD = (int) maxDesync;
+                                        float randNum = rand()%(mD-(-mD) + 1) + -mD;
 			                        cvar->ConsoleDPrintf(XORSTR("Forcing bruteforce resolver\n"));
 cvar->ConsoleDPrintf(XORSTR("Current Yaw: "));
 cvar->ConsoleDPrintf(std::to_string(randNum).c_str());

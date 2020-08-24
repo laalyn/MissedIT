@@ -27,12 +27,31 @@ static void RageAntiAIm()
 	    "Real Arround Fake",
         "Semi Direction",
         "Free Stand",
+	"Jitter",
     };
     ImGui::Columns(1, nullptr, false); // Pick Rage Anti Aim type
     {
         ImGui::PushItemWidth(-1);
         ImGui::Combo(XORSTR("##RageAntiAimType"), (int*)&Settings::AntiAim::RageAntiAim::Type, RageAntiAimType, IM_ARRAYSIZE(RageAntiAimType));
         ImGui::PopItemWidth();
+    }
+    if (Settings::AntiAim::RageAntiAim::Type == RageAntiAimType::JitterAntiAim)
+    {
+        ImGui::Columns(2, nullptr, false);
+        {
+            ImGui::ItemSize(ImVec2(0.0f, 0.0f), 0.0f);
+            ImGui::Text(XORSTR("Yaw Offset"));
+            ImGui::Checkbox(XORSTR("Pitch Jitter"), &Settings::AntiAim::RageAntiAim::pitchJitter);
+
+	}
+        ImGui::NextColumn();
+        {
+            ImGui::PushItemWidth(-1);
+            ImGui::SliderFloat(XORSTR("##YawOffset"), &Settings::AntiAim::RageAntiAim::offset, 1, 360, "Yaw offset : %.0f");
+
+            ImGui::PopItemWidth();
+        }
+
     }
 
     if (Settings::AntiAim::RageAntiAim::Type == RageAntiAimType::FreeStand)
@@ -52,7 +71,7 @@ static void RageAntiAIm()
         if(Settings::AntiAim::Yaw::typeReal == AntiAimRealType_Y::Jitter)
             ImGui::SliderFloat(XORSTR("##RealJitterPercentage"), &Settings::AntiAim::RageAntiAim::JitterPercent, 1, 100, "Real Jitter Ammount : %.0f perent");
     }
-    else
+    else if (Settings::AntiAim::RageAntiAim::Type != RageAntiAimType::JitterAntiAim)
     {
         ImGui::Columns(2, nullptr, false);
         {

@@ -232,6 +232,7 @@ enum class RageAntiAimType : int
 	RealArroundFake,
 	SemiDirection,
 	FreeStand,
+	JitterAntiAim,
 };
 
 enum class LegitAAType : int
@@ -802,6 +803,8 @@ namespace Settings
         }
         namespace RageAntiAim
         {
+	    inline bool pitchJitter;
+	    inline float offset = 180;
 	    inline bool invertOnHurt = false;
             inline bool enable = false;
 			inline ButtonCode_t InvertKey;
