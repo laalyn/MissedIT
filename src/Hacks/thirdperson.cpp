@@ -1,5 +1,6 @@
 #include "thirdperson.h"
 #include "antiaim.h"
+#include "../Utils/xorstring.h"
 
 #include "../settings.h"
 #include "../interfaces.h"
@@ -62,6 +63,7 @@ void ThirdPerson::OverrideView(CViewSetup *pSetup)
 
        	 	input->m_fCameraInThirdPerson = true;
 			input->m_vecCameraOffset = Vector(viewAngles.x, viewAngles.y, Settings::ThirdPerson::distance * ((tr.fraction < 1.0f) ? tr.fraction : 1.0f) );
+
 		}
 		else
 		{

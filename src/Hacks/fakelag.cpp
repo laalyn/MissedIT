@@ -14,9 +14,9 @@ static void fakeDuck(CUserCmd* cmd )
 	if (!inputSystem->IsButtonDown(Settings::AntiAim::FakeDuck::fakeDuckKey))
 		return;
 
-	cmd->buttons |= IN_BULLRUSH;
+//	cmd->buttons |= IN_BULLRUSH;
 
-	FakeLag::ticks > 7 ? cmd->buttons |= IN_DUCK : cmd->buttons &= ~IN_DUCK;
+	FakeLag::ticks = 14 ? cmd->buttons |= IN_DUCK : cmd->buttons &= ~IN_DUCK;
 }
 int random_int(int min, int max) {
    return min + rand() % (max - min);
@@ -36,7 +36,7 @@ Settings::FakeLag::value = random_int(1, 14);
 
 void FakeLag::CreateMove(CUserCmd* cmd)
 {
-	fakeDuck( cmd ); // for fake ducking don't ask my why here
+//	fakeDuck( cmd ); // for fake ducking don't ask my why here
 
 	if (!Settings::FakeLag::enabled)
 		return;
@@ -79,7 +79,15 @@ void FakeLag::CreateMove(CUserCmd* cmd)
 		}
 		else{
 		if (!Settings::AntiAim::randomLag::enabled){
+     auto velocity = localplayer->GetVelocity();
+auto extrapolatedVelocity = sqrt(sqrt(velocity.x * velocity.y * velocity.z));
+             auto requiredPacketsToBreakLagComp = 65 / extrapolatedVelocity;
+     if (!(requiredPacketsToBreakLagComp < Settings::FakeLag::value) && requiredPacketsToBreakLagComp <= 16)
+                CreateMove::sendPacket = FakeLag::ticks >= requiredPacketsToBreakLagComp;
+            else
+//                CreateMove::sendPacket  >= 16;
 			CreateMove::sendPacket = FakeLag::ticks < 16 - Settings::FakeLag::value;
+
 		}
 		else {
 CreateMove::sendPacket = FakeLag::ticks < 16 - random_int(1, 14);

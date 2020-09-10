@@ -45,7 +45,7 @@ static bool IsTickValid(float time) // pasted from polak getting some invalid ti
 
 	float deltaTime = correct - (globalVars->curtime - time);
 
-	if (fabsf(deltaTime) < 0.2f)
+	if (fabsf(deltaTime) < Settings::Ragebot::backTrack::time)
 		return true;
 
 	return false;

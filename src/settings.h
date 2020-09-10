@@ -117,6 +117,7 @@ enum class ChamsType : int
 	ADDITIVETWO,
 	WIREFRAME,
 	FLAT,
+	GLOW,
 	NONE,
 };
 
@@ -200,6 +201,13 @@ enum class SpammerType : int
 	SPAMMER_NONE,
 	SPAMMER_NORMAL,
 	SPAMMER_POSITIONS,
+};
+
+enum class resolverType : int
+{
+        NONE,
+        Experimental,
+        ApuWare,
 };
 
 enum class AntiAimRealType_Y : int
@@ -679,11 +687,27 @@ namespace Settings
 
 	namespace Ragebot
 	{
+		namespace exploits
+		{
+                        inline ButtonCode_t doubletapKey;
+                        inline bool doubletapToggle;
+                        inline bool enabled;
+		        inline bool doubletap;
+			inline int doubletapSpeed = 0;
+		}
+
+		inline float test;
+		namespace quickpeek
+		{
+         		inline ButtonCode_t key;
+			inline bool enabled;
+		        inline ColorVar color = ImColor(255, 255, 255, 190 );
+		}
 		inline bool DoubleTap;
 		inline float MinDamage = 50.f;
 		inline bool enabled = false;
-        inline bool silent = false;
-        inline bool friendly = false;
+        	inline bool silent = false;
+        	inline bool friendly = false;
 		inline bool DoubleFire = false;
 
 		inline DamagePrediction damagePrediction = DamagePrediction::damage;
@@ -737,6 +761,7 @@ namespace Settings
 		namespace backTrack
 		{
 			inline bool enabled = false;
+			inline float time = 0.2f;
 		}
 
 		inline std::unordered_map<ItemDefinitionIndex, RageWeapon_t, Util::IntHash<ItemDefinitionIndex>> weapons = {
@@ -781,6 +806,7 @@ namespace Settings
 
     namespace AntiAim
     {
+	inline bool lbyjitter;
 	namespace airspin
 		{
 	inline bool enabled;
@@ -861,15 +887,21 @@ namespace Settings
 
 	namespace Resolver
 	{
+		inline float resolveDelt = 0.5f;
 		inline bool resolveAll = false;
 		inline float goalFeetYaw;
 		inline float EyeAngles;
 		inline bool manual = false;
 		inline bool forcebrute = false;
+		inline bool resolveAllAP;
+                inline resolverType resolverType = resolverType::Experimental;
+
 	}
 
 	namespace ESP
 	{
+		inline bool indicators;
+		inline bool drawback;
 		inline bool showimpacts;
 		inline bool KeyBinds = false;
 	namespace keybi
@@ -879,6 +911,10 @@ namespace Settings
 		inline int w;
 		inline int h;
 	}
+	inline ColorVar manualAAColor;
+
+	inline bool showDormant = true;
+	inline ColorVar dormantColor = ImColor(255, 255, 255, 255);
 	inline bool enabled = false;
         inline DrawingBackend backend = DrawingBackend::IMGUI;
 		inline Filter filter = Filter::Enemies;

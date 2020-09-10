@@ -1,5 +1,6 @@
 #include <iomanip>
 
+#include "../SDK/INetChannel.h"
 #include "esp.h"
 #include "autowall.h"
 #include "../fonts.h"
@@ -16,6 +17,8 @@
 #include "../ATGUI/texture.h"
 #include "../Resources/tux.h"
 #include "antiaim.h"
+#include "Tickbase.h"
+#include "fakelag.h"
 
 #include <climits>
 #include <deque>
@@ -114,14 +117,24 @@ static void CheckActiveSounds() {
 
 static void DrawManualAntiaim()
 {
+Vector2D indSize = Draw::GetTextSize( "v", astrium );
+int x = 960;
+int y = 520;
+
     if (Settings::AntiAim::ManualAntiAim::Enable)
     {
         if (AntiAim::ManualAntiAim::alignLeft) {
- Draw::Text( Paint::engineWidth / 2 , Paint::engineHeight / 2 , "<" , astrium,Color::FromImColor( Settings::ESP::enemyInfoColor.Color()) );
+        Draw::AddLine( x - 80 , y + 15, x - 60,  y, Settings::ESP::manualAAColor.Color() ); 
+        Draw::AddLine( x - 80 , y + 15, x - 60,  y + 30, Settings::ESP::manualAAColor.Color() ); 
+
 
         } else if (AntiAim::ManualAntiAim::alignBack) {
+        Draw::AddLine( x, y + 80, x + 15,  y + 60, Settings::ESP::manualAAColor.Color() ); 
+        Draw::AddLine( x, y + 80, x - 15,  y + 60, Settings::ESP::manualAAColor.Color() ); 
 
         } else if (AntiAim::ManualAntiAim::alignRight) {
+        Draw::AddLine( x + 80 , y + 15, x + 60,  y, Settings::ESP::manualAAColor.Color() ); 
+        Draw::AddLine( x + 80 , y + 15, x + 60,  y + 30, Settings::ESP::manualAAColor.Color() ); 
 
         }
     }
@@ -213,6 +226,9 @@ ImColor ESP::GetESPPlayerColor(C_BasePlayer* player, bool visible)
 	if (!localplayer)
 		return ImColor(255, 255, 255, 255);
 
+	if (player->GetDormant() && Settings::ESP::showDormant)
+		return ImColor(255, 255, 255, 255);
+
 	ImColor playerColor;
 
 	if (player == localplayer)
@@ -297,7 +313,16 @@ bool ESP::WorldToScreen( const Vector &origin, ImVec2 * const screen ) {
 						  vMatrix[1][3]) * inverseW) * height + 0.5f);
 	return true;
 }
+void DrawDormant (C_BaseEntity* entity, ImColor color){
+      //  int x, y, w, h;
+       // if ( !GetBox( entity, x, y, w, h ) || !(entity->GetDormant()))
+        //        return;
 
+      //  DrawBox( color, x, y, w, h, entity , Settings::ESP::Boxes::type);
+       // Vector2D nameSize = Draw::GetTextSize( string, esp_font );
+       // Draw::AddText(( int ) ( x + ( w / 2 ) - ( nameSize.x / 2 ) ), y + h + 2, string, color );
+
+}
 static void DrawBox( ImColor color, int x, int y, int w, int h, C_BaseEntity* entity, BoxType& boxtype ) {
  
 	if ( boxtype == BoxType::FRAME_2D ) {
@@ -496,12 +521,13 @@ static void DrawEntity( C_BaseEntity* entity, const char* string, ImColor color 
 }
 static void DrawLag(int x, int y, C_BasePlayer* player){
 int lag = TIME_TO_TICKS(player->GetSimulationTime() - player->GetOldSimulationTime());
-		int woop = lag * 10;
-std::string bombStr = std::to_string(woop );
+		int woop = FakeLag::ticks * 5;
+	//	int woop = INetChannel::GetAvgChoke * 10;
+		std::string bombStr = std::to_string(woop );
                 Vector2D nameSize = Draw::GetTextSize(bombStr.c_str(), esp_font);
-                Draw::AddText(x + woop - nameSize.x, y + 5, bombStr.c_str()  , ImColor( 255, 255, 255, 255 ) );
                 
-Draw::AddRectFilled(x, y, x + woop, y + 10, ImColor(0, 40, 0, 255));
+Draw::AddRectFilled(x, y, x + woop, y + 20, ImColor(0, 40, 0, 255));
+                Draw::AddText(x + woop - nameSize.x, y + 5, bombStr.c_str()  , ImColor( 255, 255, 255, 255 ) );
 
 
 
@@ -697,7 +723,57 @@ static void DrawHeaddot( C_BasePlayer* player ) {
 
 	Draw::AddCircleFilled( head2D.x, head2D.y, Settings::ESP::HeadDot::size, ESP::GetESPPlayerColor( player, bIsVisible ), 10 );
 }
+int GetBlendedColor(int percentage)
+{
+    if (percentage < 56.5)
+        return std::round(percentage * 2.55);
+    else
+        return 255;
+}
 
+static void DrawIndicators() {
+Vector2D indSize = Draw::GetTextSize( "LBY", esp_font );
+int x = 960 - (indSize.x / 2);
+int y = 520;
+
+        C_BasePlayer* localplayer = (C_BasePlayer*) entityList->GetClientEntity(engine->GetLocalPlayer());
+        if (!localplayer)
+                return;
+    if ( !Settings::ESP::indicators )
+        return;
+
+ImColor Color;
+if (AntiAim::LbyUpdate()){
+Color = ImColor( 0, 255, 0, 255 );
+}
+else {
+Color = ImColor( 255, 0, 0, 255 );
+
+}
+Draw::AddText( x, y + 50, "LBY", Color );
+    float desyncAmount = AntiAim::GetMaxDelta(localplayer->GetAnimState());
+
+           int desyncGreenPercentage;
+
+            if (desyncAmount > 0)
+                desyncGreenPercentage = (3.4483 * desyncAmount) / 2;
+            else
+                desyncGreenPercentage = ((3.4483 * desyncAmount) * -1) / 2;
+            int desyncRedPercentage = 100 - desyncGreenPercentage;
+ImColor AColor = ImColor ( GetBlendedColor(desyncRedPercentage), GetBlendedColor(desyncGreenPercentage), 0, 255);
+Draw::AddText( x, y + 60, "AA", AColor );
+ImColor DColor;
+//if (Tickbase::canShift(16, false)){
+//DColor = ImColor( 0, 255, 0, 255 );
+//}
+//else {
+//DColor = ImColor( 255, 0, 0, 255 );
+
+//}
+
+//Draw::AddText( x, y + 70, "DT", DColor );
+
+}
 static void DrawSounds( C_BasePlayer *player, ImColor playerColor ) {
     std::unique_lock<std::mutex> lock( footstepMutex, std::try_to_lock );
     if( lock.owns_lock() ){
@@ -731,24 +807,56 @@ C_BasePlayer* localplayer = (C_BasePlayer*) entityList->GetClientEntity(engine->
 		int width, height;
 engine->GetScreenSize(width,height);
 Vector2D nameSize = Draw::GetTextSize(XORSTR("AntiAim Inverter [Toggled]"), esp_font);
-    Draw::AddRectFilled(x - 5, y - 5, x + nameSize.x , y + 10, ImColor(40, 40, 40, 225));
+    Draw::AddRectFilled(x - 5, c - 5, x + nameSize.x , y + 80, ImColor(40, 40, 40, 225));
+    Draw::AddRectFilled(x, c, x + nameSize.x - 5, y + 75, ImColor(0, 0, 0, 235));
+    Draw::AddRect(x - 5, c - 5, x + nameSize.x , y + 80, ImColor(200, 200, 200, 50));
+    Draw::AddRect(x, c, x + nameSize.x - 5, y + 75, ImColor(200, 200, 200, 50));
+
+    Draw::AddLine(x, c, x + nameSize.x - 5, c, Settings::ESP::Watermark::color.Color());
 
 if (inputSystem->IsButtonDown(Settings::Autoblock::key) && Settings::Autoblock::enabled){
-                Draw::AddText( x, y, "AutoBlock [Holding]", ImColor( 255, 0, 255, 255 ) );
+                Draw::AddText( x + 1, y + 1, "AutoBlock  [Holding]", ImColor( 255, 255, 255, 255 ) );
 y = y + 10;
 }
 if (inputSystem->IsButtonDown(Settings::AntiAim::SlowWalk::key) && Settings::AntiAim::SlowWalk::enabled){
-                Draw::AddText( x, y, "SlowWalk [Holding]", ImColor( 255, 0, 255, 255 ) );
+                Draw::AddText( x + 1, y + 2, "SlowWalk  [Holding]", ImColor( 255, 255, 255, 255 ) );
 y = y + 10;
 }
-if (Settings::AntiAim::RageAntiAim::inverted && Settings::AntiAim::RageAntiAim::enable){
-                Draw::AddText( x, y, "AntiAim Inverter [Toggled]", ImColor( 255, 0, 255, 255 ) );
+if (Settings::AntiAim::RageAntiAim::inverted && Settings::AntiAim::RageAntiAim::enable || Settings::AntiAim::LegitAntiAim::inverted){
+                Draw::AddText( x + 1, y + 3, "AA Inverter [Toggled]", ImColor( 255, 255, 255, 255 ) );
 y = y + 10;
 }
 if (inputSystem->IsButtonDown(Settings::AntiAim::FakeDuck::fakeDuckKey) && Settings::AntiAim::FakeDuck::enabled){
-                Draw::AddText( x, y, "FakeDuck [Holding]", ImColor( 255, 0, 255, 255 ) );
+                Draw::AddText( x + 1, y + 4, "FakeDuck  [Holding]", ImColor( 255, 255, 255, 255 ) );
 y = y + 10;
 }
+if (inputSystem->IsButtonDown(Settings::Ragebot::quickpeek::key) && Settings::Ragebot::quickpeek::enabled){
+                Draw::AddText( x + 1, y + 5, "QuickPeek [Holding]", ImColor( 255, 255, 255, 255 ) );
+y = y + 10;
+}
+if (AntiAim::ManualAntiAim::alignLeft && Settings::AntiAim::ManualAntiAim::Enable){
+                Draw::AddText( x + 1, y + 5, "Manual AA [LEFT]", ImColor( 255, 255, 255, 255 ) );
+y = y + 10;
+}else if (AntiAim::ManualAntiAim::alignBack && Settings::AntiAim::ManualAntiAim::Enable){
+                Draw::AddText( x + 1, y + 5, "Manual AA [BACK]", ImColor( 255, 255, 255, 255 ) );
+y = y + 10;
+}else if (AntiAim::ManualAntiAim::alignRight && Settings::AntiAim::ManualAntiAim::Enable){
+                Draw::AddText( x + 1, y + 5, "Manual AA [RIGHT]", ImColor( 255, 255, 255, 255 ) );
+y = y + 10;
+}
+if ( Settings::Resolver::resolveAll && Settings::Resolver::manual && Settings::Resolver::forcebrute){
+                Draw::AddText( x + 1, y + 5, "Resolver Override [BRUTE]", ImColor( 255, 255, 255, 255 ) );
+y = y + 10;
+}
+if ( Settings::Ragebot::exploits::doubletapToggle){
+                Draw::AddText( x + 1, y + 5, "Double Tap [TOGGLED]", ImColor( 255, 255, 255, 255 ) );
+y = y + 10;
+}
+
+
+//    Draw::AddRectFilled(x - 5, c - 5, x + nameSize.x , y + 10, ImColor(40, 40, 40, 225));
+//    Draw::AddLine(x - 2.5, c - 5, x + nameSize.x , c + 5, Settings::ESP::Watermark::color.Color());
+
                // Draw::AddRectFilled(1653 + 5 + 73, 1 + 5, 1653 + 255, 30 - 5, ImColor(10, 10, 10, 225));
 
 
@@ -1128,7 +1236,17 @@ static void DrawPlayer(C_BasePlayer* player)
 	}
 	
 }
+static void DrawImpacts(IGameEvent* event)
+{
+if (!(strstr(event->GetName(), XORSTR("bullet_impact"))))
+		return;
 
+                float x = event->GetFloat(XORSTR("x"));
+		float y = event->GetFloat(XORSTR("y"));
+                float z = event->GetFloat(XORSTR("z"));
+
+
+}
 static void DrawBomb(C_BaseCombatWeapon* bomb, C_BasePlayer* localplayer)
 {
 	if (!(*csGameRules) || !(*csGameRules)->IsBombDropped())
@@ -1691,7 +1809,8 @@ void ESP::Paint()
 		{
 			C_BasePlayer* player = (C_BasePlayer*) entity;
 
-			if (player->GetDormant() || !player->GetAlive())
+			//if (player->GetDormant() || !player->GetAlive())
+			  if (!player->GetAlive())
 				continue;
 
 			DrawPlayer(player);
@@ -1770,7 +1889,7 @@ void ESP::Paint()
 				DrawDZItems(entity, localplayer);
 		}
 	}
-	DrawLag(500, 500, localplayer);
+	DrawLag(Settings::ESP::keybi::x, Settings::ESP::keybi::y + 90, localplayer);
 	if (Settings::ESP::KeyBinds)
         	DrawKeyBinds(Settings::ESP::keybi::x, Settings::ESP::keybi::y);
 	if (Settings::ESP::FOVCrosshair::enabled)
@@ -1790,6 +1909,7 @@ void ESP::Paint()
 
 		DrawManualAntiaim();
 }
+DrawIndicators();
 }
 
 void ESP::DrawModelExecute()

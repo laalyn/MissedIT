@@ -8,11 +8,11 @@
 #include "../settings.h"
 #include "../interfaces.h"
 #include "../Hooks/hooks.h"
-
+#include "lagcomp.h"
 IMaterial *materialChamsFlat, *materialChamsFlatIgnorez;
 IMaterial *WhiteAdditive,*WhiteAdditiveIgnoreZ;
 IMaterial *AdditiveTwo, *AdditiveTwoIgnoreZ;
-
+IMaterial* materialChamsGlowIgnorez;
 typedef void (*DrawModelExecuteFn) (void*, void*, void*, const ModelRenderInfo_t&, matrix3x4_t*);
 
 static void DrawPlayer(void* thisptr, void* context, void *state, const ModelRenderInfo_t &pInfo, matrix3x4_t* pCustomBoneToWorld)
@@ -61,6 +61,10 @@ static void DrawPlayer(void* thisptr, void* context, void *state, const ModelRen
 		case ChamsType::ADDITIVETWO:
 			visible_material = AdditiveTwo;
 			hidden_material = AdditiveTwoIgnoreZ;
+			break;
+		case ChamsType::GLOW:
+                        visible_material = materialChamsFlat;
+			hidden_material = materialChamsGlowIgnorez;
 			break;
 		default :
 			return;
@@ -159,6 +163,8 @@ static void DrawFake(void* thisptr, void* context, void *state, const ModelRende
 		case ChamsType::ADDITIVETWO:
 			Fake_meterial = AdditiveTwo;
 			break;
+                case ChamsType::GLOW:
+                        Fake_meterial = materialChamsGlowIgnorez;
 		default:
 			return;
 	}
@@ -179,13 +185,15 @@ static void DrawFake(void* thisptr, void* context, void *state, const ModelRende
 
 	static matrix3x4_t fakeBoneMatrix[128];
 	float fakeangle = AntiAim::fakeAngle.y - AntiAim::realAngle.y;
+        float fakeanglex = 0;
+
 	static Vector OutPos;
 	for (int i = 0; i < 128; i++)
 	{
-		Math::AngleMatrix(Vector(0, fakeangle, 0), fakeBoneMatrix[i]);
+		Math::AngleMatrix(Vector(fakeanglex, fakeangle, 0), fakeBoneMatrix[i]);
 		matrix::MatrixMultiply(fakeBoneMatrix[i], pCustomBoneToWorld[i]);
 		Vector BonePos = Vector(pCustomBoneToWorld[i][0][3], pCustomBoneToWorld[i][1][3], pCustomBoneToWorld[i][2][3]) - pInfo.origin;
-		Math::VectorRotate(BonePos, Vector(0, fakeangle, 0), OutPos);
+		Math::VectorRotate(BonePos, Vector(fakeanglex , fakeangle, 0), OutPos);
 		OutPos += pInfo.origin;
                         fakeBoneMatrix[i][0][3] = OutPos.x;
                         fakeBoneMatrix[i][1][3] = OutPos.y;
@@ -197,6 +205,20 @@ static void DrawFake(void* thisptr, void* context, void *state, const ModelRende
 		Fake_meterial->AlphaModulate(0.5f);
 	}
 	//entity->SetupBones
+if (Settings::ESP::Chams::type == ChamsType::GLOW) {			
+			bool isFoundVis;
+			bool isFoundHidden;
+			//IMaterialVar* pVarVis = materialChamsGlowIgnorez->FindVar("$envmaptint", &isFoundVis, false);
+//			IMaterialVar* pVarHidden = hidden_material->FindVar("$envmaptint", &isFoundHidden, false);
+	    	ImVec4 viscolor = Settings::ESP::Chams::localplayerColor.Color(entity).Value;
+            	//pVarVis->SetVecValue(viscolor.x, viscolor.y, viscolor.z);
+			Fake_meterial->SetMaterialVarFlag(MATERIAL_VAR_ADDITIVE, false);
+	   		Fake_meterial->SetMaterialVarFlag(MATERIAL_VAR_VERTEXCOLOR, false);
+       		Fake_meterial->SetMaterialVarFlag(MATERIAL_VAR_VERTEXALPHA, false);
+       		Fake_meterial->SetMaterialVarFlag(MATERIAL_VAR_NOFOG, false);
+			Fake_meterial->AlphaModulate(Settings::ESP::Chams::localplayerColor.Color(entity).Value.w);
+
+		}
 	modelRender->ForcedMaterialOverride(Fake_meterial);
 	modelRenderVMT->GetOriginalMethod<DrawModelExecuteFn>(21)(thisptr, context, state, pInfo, fakeBoneMatrix);
 	modelRender->ForcedMaterialOverride(nullptr);
@@ -237,6 +259,46 @@ static void DrawWeapon(const ModelRenderInfo_t& pInfo)
 	mat->SetMaterialVarFlag(MATERIAL_VAR_WIREFRAME, Settings::ESP::Chams::Weapon::type == ChamsType::WIREFRAME);
 	mat->SetMaterialVarFlag(MATERIAL_VAR_NO_DRAW, Settings::ESP::Chams::Weapon::type == ChamsType::NONE);
 	modelRender->ForcedMaterialOverride(mat);
+}
+static void DrawRecord(void *thisptr, void *context, void *state, const ModelRenderInfo_t &pInfo, matrix3x4_t *pCustomBoneToWorld)
+{
+  //  if (!Settings::LagComp::enabled)
+ //       return;
+  //if (!Settings::ESP::drawback)
+    //    return;
+
+    C_BasePlayer *localplayer = (C_BasePlayer *)entityList->GetClientEntity(engine->GetLocalPlayer());
+
+    if (!localplayer)
+        return;
+if (!localplayer->GetAlive())
+return;
+        Color lag_color = Color::FromImColor(Settings::ESP::Chams::Arms::color.Color());
+
+    IMaterial *material = materialChamsFlat;
+    Color color = lag_color;
+
+    material->ColorModulate(color);
+    material->AlphaModulate(Settings::ESP::Chams::Arms::color.Color().Value.w);
+
+    for (auto &frame : LagComp::lagCompTicks)
+    {
+        for (auto &ticks : frame.records)
+        {
+            if (pInfo.entity_index < engine->GetMaxClients() && entityList->GetClientEntity(pInfo.entity_index) == ticks.entity)
+            {
+                auto tick_difference = (globalVars->tickcount - frame.tickCount);
+                if (tick_difference <= 1) continue;
+
+                material->ColorModulate(color);
+                material->AlphaModulate(Settings::ESP::Chams::Arms::color.Color().Value.w);
+
+                modelRender->ForcedMaterialOverride(materialChamsFlat);
+                modelRenderVMT->GetOriginalMethod<DrawModelExecuteFn>(21)(thisptr, context, state, pInfo, (matrix3x4_t *)ticks.bone_matrix);
+                modelRender->ForcedMaterialOverride(nullptr);
+            }
+        }
+    }
 }
 
 static void DrawArms(const ModelRenderInfo_t& pInfo)
@@ -293,7 +355,8 @@ void Chams::DrawModelExecute(void* thisptr, void* context, void *state, const Mo
 	
 		materialChamsFlat = Util::CreateMaterial(XORSTR("UnlitGeneric"), XORSTR("VGUI/white_additive"), false, true, true, true, true);
 		materialChamsFlatIgnorez = Util::CreateMaterial(XORSTR("UnlitGeneric"), XORSTR("VGUI/white_additive"), true, true, true, true, true);
-		
+		materialChamsGlowIgnorez = Util::CreateMaterial(XORSTR("VertexLitGeneric"), XORSTR("models/gibs/glass/glass"), true, false, true, true, true);	
+	
 		WhiteAdditive = Util::CreateMaterial(XORSTR("VertexLitGeneric"), XORSTR("VGUI/white_additive"), false, false, true, true, true);
 		WhiteAdditiveIgnoreZ = Util::CreateMaterial(XORSTR("VertexLitGeneric"), XORSTR("VGUI/white_additive"), true, false, true, true, true);
 		
@@ -309,6 +372,7 @@ void Chams::DrawModelExecute(void* thisptr, void* context, void *state, const Mo
 	{
 		DrawFake(thisptr, context, state, pInfo, pCustomBoneToWorld);
 		DrawPlayer(thisptr, context, state, pInfo, pCustomBoneToWorld);
+                 DrawRecord(thisptr, context, state, pInfo, pCustomBoneToWorld);
 		
 	}
 		

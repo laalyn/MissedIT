@@ -45,7 +45,9 @@ namespace Ragebot {
 
     inline int prevDamage = 0, dtTick_Count = 0, dtTick_Need = 0;
     inline ItemDefinitionIndex prevWeapon = ItemDefinitionIndex::INVALID;
-
+    void drawStartPos();
+    void quickpeek(CUserCmd*);
+    void gotoStart(CUserCmd*);
     void CreateMove(CUserCmd*);
     void FireGameEvent(IGameEvent* event);
 }

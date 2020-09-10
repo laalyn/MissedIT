@@ -16,6 +16,7 @@
 								"ADDTIVE TWO",
 								"WIREFRAME",
 								"FLAT",
+								"GLOW",
 								"NONE",
 								};
 
@@ -93,6 +94,8 @@ static void FilterEnemies()
 		ImGui::Checkbox(XORSTR("Head Dot"), &Settings::ESP::FilterEnemy::HeadDot::enabled);
 		ImGui::Checkbox(XORSTR("Skeleton"), &Settings::ESP::FilterEnemy::Skeleton::enabled);
 		ImGui::Checkbox(XORSTR("Glow"), &Settings::ESP::Glow::enabled);
+                ImGui::Checkbox(XORSTR("Dormant"), &Settings::ESP::showDormant);
+
 	}
 	// ImGui::SameLine();
 	// ColorButton::RenderWindow("Enemy Chams", (int)49, ImGui::ColorButton(XORSTR("Enemy Chams"), (ImVec4)Settings::ESP::enemyVisibleColor.color,0,ImVec2(20,20)));
@@ -374,6 +377,8 @@ void Visuals::RenderTab()
 					ImGui::Selectable(XORSTR("Only When Shooting"), &Settings::Recoilcrosshair::showOnlyWhenShooting, ImGuiSelectableFlags_DontClosePopups);
 					ImGui::Selectable(XORSTR("Filled"), &Settings::ESP::FOVCrosshair::filled, ImGuiSelectableFlags_DontClosePopups);
 					ImGui::Selectable(XORSTR("Show SpreadLimit"), &Settings::ESP::Spread::spreadLimit, ImGuiSelectableFlags_DontClosePopups);
+                                        ImGui::Selectable(XORSTR("Show Indicators"), &Settings::ESP::indicators, ImGuiSelectableFlags_DontClosePopups);
+
 				}
 				ImGui::EndCombo();
 			}

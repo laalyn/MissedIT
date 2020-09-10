@@ -33,5 +33,5 @@ namespace Resolver
     void FireGameEvent(IGameEvent *event);			 // Strangely, I never see this getting called.
     void CreateMove(CUserCmd* cmd);
     void AnimationFix(C_BasePlayer *player);
-
+//	void PostFrameStageNotify(ClientFrameStage_t stage);
 } 

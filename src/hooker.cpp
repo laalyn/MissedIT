@@ -8,8 +8,8 @@
 #include "sdlhook.h"
 #include "interfaces.h"
 #include "offsets.h"
-
-
+#include "Utils/GlobalVars.h"
+//#include "SDK/CInput.h"
 int* nPredictionRandomSeed = nullptr;
 CMoveData* g_MoveData = nullptr;
 bool* s_bOverridePostProcessingDisable = nullptr;
@@ -122,7 +122,11 @@ bool Hooker::HookRecvProp(const char* className, const char* propertyName, std::
 
 	return false;
 }
-
+//void Hooker::FindDeathNotices()
+//{
+//if (!ClearDeathNotices) ClearDeathNotices = (void(__thiscall*)(DWORD))UTILS::FindSignature("client_panorama.dll", "55 8B EC 83 EC 0C 53 56 8B 71 58");
+//if (ClearDeathNotices) ClearDeathNotices(((DWORD)deathNotice - 20));
+//} This is for later.
 void Hooker::FindIClientMode()
 {
     uintptr_t hudprocessinput = reinterpret_cast<uintptr_t>(getvtable(client)[10]);
@@ -130,7 +134,10 @@ void Hooker::FindIClientMode()
 
 	clientMode = GetClientMode();
 }
-
+//void Hooker::WriteUserCmd()
+//{
+//     WriteUsercmd = PatternFinder::FindPatternInModule("client_client.so", XORSTR("\x55\x8B\xEC\x83\xE4\xF8\x51\x53\x56\x8B\xD9\x8B\x0D"), XORSTR("xxxxxxxxxxxxxxxxxx"));
+//}
 void Hooker::FindGlobalVars()
 {
 	uintptr_t HudUpdate = reinterpret_cast<uintptr_t>(getvtable(client)[11]);

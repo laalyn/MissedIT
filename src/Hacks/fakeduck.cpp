@@ -19,45 +19,30 @@ void FakeDuck::CreateMove(CUserCmd *cmd)
 	{
 		FirstDuck = false;
 		return;
-	}
-
-	if ( !localplayer->GetAnimState()->duckProgress && !FirstDuck )
-	{
-		cmd->buttons |= IN_DUCK;
-		CreateMove::sendPacket = true;
-	}
-	else 
+	}else {
 		FirstDuck = true;
-	
-	if ( cmd->buttons&IN_ATTACK )
-	{
-		cmd->buttons &= ~IN_DUCK;
-		CreateMove::sendPacket = false;
-	}
-	
-	CreateMove::sendPacket = false;
+		}
 
-	static bool counter = false;
-	static int counters = 0;
-
-	if (counters == 9 )
-	{
-		counters = 0;
-		counter = !counter;
-	}
-
-	counters++;
-
-	if (counter)
-	{
-		cmd->buttons |= IN_BULLRUSH | IN_DUCK;
-		CreateMove::sendPacket = true;
-	}
-	else
-	{
-		cmd->buttons &= ~IN_DUCK;
-		CreateMove::sendPacket = false;
-	}		
+if (FirstDuck){
+  static bool counter = false;
+            static int counters = 0;
+            if (counters == 9)
+            {
+                counters = 0;
+                counter = !counter;
+            }
+            counters++;
+            if (counter)
+            {
+                cmd->buttons |= IN_DUCK;
+                CreateMove::sendPacket = true;
+            }
+            else
+            {
+                CreateMove::sendPacket = false;
+                cmd->buttons &= ~IN_DUCK;
+            }
+}
 }
 
 void FakeDuck::OverrideView(CViewSetup *pSetup)

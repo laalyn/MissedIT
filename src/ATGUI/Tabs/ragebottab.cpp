@@ -272,7 +272,32 @@ void RagebotTab::RenderTab()
 			*/
 			ImGui::Spacing(); ImGui::Spacing();
 			ImGui::Columns(1, nullptr, false);
-				ImGui::Checkbox(XORSTR("Resolver"), &Settings::Resolver::resolveAll);
+		  const char* resolverType[] = {
+		        "NONE",
+		        "Experimental",
+		        "ApuWare",
+		    };
+        ImGui::Combo(XORSTR("##ResolverType"), (int*)&Settings::Resolver::resolverType, resolverType, IM_ARRAYSIZE(resolverType));
+        switch (Settings::Resolver::resolverType)
+        {
+        case resolverType::Experimental:
+		Settings::Resolver::resolveAll = true;
+		Settings::Resolver::resolveAllAP = false;
+            break;
+        case resolverType::ApuWare:
+                Settings::Resolver::resolveAll = false;
+                Settings::Resolver::resolveAllAP = true;
+            break;
+        case resolverType::NONE:
+                Settings::Resolver::resolveAll = false;
+                Settings::Resolver::resolveAllAP = false;
+
+            break;
+        default:
+            break;
+        }
+
+			//	ImGui::Checkbox(XORSTR("Resolver"), &Settings::Resolver::resolveAll);
 			// End of resolver tab
 
 			// Others Settings For Weapons
@@ -325,6 +350,16 @@ void RagebotTab::RenderTab()
 					
 				ImGui::Checkbox(XORSTR("Auto Crouch"), &Settings::Ragebot::AutoCrouch::enable);
 				ImGui::Checkbox(XORSTR("LagCom"), &Settings::Ragebot::backTrack::enabled);
+				if (Settings::Ragebot::backTrack::enabled)
+                                ImGui::SliderFloat(XORSTR("##TRACKTIME"), &Settings::Ragebot::backTrack::time, 0.0f, 0.2f);
+
+                                ImGui::Checkbox(XORSTR("AutoKnife"), &Settings::AutoKnife::enabled);
+                                ImGui::Checkbox(XORSTR("Exploits"), &Settings::Ragebot::exploits::enabled);
+				if (Settings::Ragebot::exploits::enabled){
+                                ImGui::Checkbox(XORSTR("DoubleTap"), &Settings::Ragebot::exploits::doubletap);
+				    UI::KeyBindButton(&Settings::Ragebot::exploits::doubletapKey);
+
+				}
 				if (ImGui::Checkbox(XORSTR("Silent Aim"), &silent))
 					UI::UpdateRageWeaponSettings();
 			}

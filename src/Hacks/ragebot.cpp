@@ -2,21 +2,21 @@
 #pragma GCC diagnostic ignored "-Warray-bounds"
 
 #include "ragebot.h"
-
+#include "../Utils/patternfinder.h"
 #include "resolver.h"
-
+#include "../Utils/draw.h"
 #define PI_F (3.14)
 #define absolute(x) ( x = x < 0 ? x * -1 : x)
 #define TICK_INTERVAL globalVars->interval_per_tick
 #define RandomeFloat(x) (static_cast<float>( static_cast<float>(std::rand())/ static_cast<float>(RAND_MAX/x)))
 #define TIME_TO_TICKS( dt )	( (int)( 0.5f + (float)(dt) / TICK_INTERVAL ) )
 #define NormalizeNo(x) (x = (x < 0) ? ( x * -1) : x )
-
+Vector quickpeekstartpos = Vector{ 0, 0, 0 };
+bool hasShot;
 std::vector<int64_t> Ragebot::friends = {};
 std::vector<long> RagebotkillTimes = { 0 }; // the Epoch time from when we kill someone
 inline bool	doubleFire = false;
 static QAngle RCSLastPunch = QAngle(0);
-
 static void BestMultiPointHEADDamage(C_BasePlayer* player, int &BoneIndex, int& Damage, Vector& Spot)
 {
 	if (!player || !player->GetAlive())
@@ -807,7 +807,53 @@ static C_BasePlayer* GetBestEnemyAndSpot(C_BasePlayer* localplayer,const RageWea
 
 	return clossestEnemy;
 }
+void Ragebot::gotoStart(CUserCmd* cmd) {
+C_BasePlayer* localPlayer = (C_BasePlayer*)entityList->GetClientEntity(engine->GetLocalPlayer());
+    if (!localPlayer || localPlayer->GetDormant() || !localPlayer->GetAlive()) return;
+    Vector playerLoc = localPlayer->GetAbsOrigin();
 
+    float yaw = cmd->viewangles.y;
+    Vector VecForward = playerLoc - quickpeekstartpos;
+
+    Vector translatedVelocity = Vector{
+        (float)(VecForward.x * cos(yaw / 180 * (float)M_PI) + VecForward.y * sin(yaw / 180 * (float)M_PI)),
+        (float)(VecForward.y * cos(yaw / 180 * (float)M_PI) - VecForward.x * sin(yaw / 180 * (float)M_PI)),
+        VecForward.z
+    };
+    cmd->forwardmove = -translatedVelocity.x * 20.f;
+    cmd->sidemove = translatedVelocity.y * 20.f;
+}
+void Ragebot::quickpeek(CUserCmd* cmd) {
+C_BasePlayer* localPlayer = (C_BasePlayer*)entityList->GetClientEntity(engine->GetLocalPlayer());
+    if (!localPlayer || localPlayer->GetDormant() || !localPlayer->GetAlive()) return;
+    if (inputSystem->IsButtonDown(Settings::Ragebot::quickpeek::key)) {
+        if (quickpeekstartpos == Vector {0, 0, 0}) {
+            quickpeekstartpos = localPlayer->GetAbsOrigin();
+        }
+        else {
+            if (cmd->buttons & IN_ATTACK) hasShot = true;
+            if (hasShot) {
+                Ragebot::gotoStart(cmd);
+            }
+        }
+    }
+    else {
+        hasShot = false;
+        quickpeekstartpos = Vector{ 0, 0, 0 };
+    }
+}
+void Ragebot::drawStartPos() {
+    C_BasePlayer* localPlayer = (C_BasePlayer*)entityList->GetClientEntity(engine->GetLocalPlayer());
+	if (quickpeekstartpos != Vector{ 0, 0, 0 }) {
+	Vector spot2D;
+	Vector playerPos;
+debugOverlay->ScreenPosition( quickpeekstartpos, spot2D);
+debugOverlay->ScreenPosition( localPlayer->GetAbsOrigin(), playerPos);
+Draw::AddCircle3D(quickpeekstartpos, 32, Settings::Ragebot::quickpeek::color.Color(), 32);
+//	Draw::AddCircleFilled( spot2D.x, spot2D.y, 32.0f, Settings::Ragebot::quickpeek::color.Color(), 32);
+	Draw::AddLine( playerPos.x, playerPos.y, spot2D.x, spot2D.y, Settings::Ragebot::quickpeek::color.Color() ); 
+}
+}
 void Ragebot::CreateMove(CUserCmd* cmd)
 {
 	if (!Settings::Ragebot::enabled)
@@ -875,7 +921,7 @@ void Ragebot::CreateMove(CUserCmd* cmd)
 			break;
 	}
 
-    if (player && Ragebot::BestDamage > 0)
+    if (player && Ragebot::BestDamage > Settings::Ragebot::test)
     {
 		Resolver::TargetID = player->GetIndex();
 		Ragebot::lockedEnemy.player = player;
@@ -918,6 +964,8 @@ void Ragebot::CreateMove(CUserCmd* cmd)
 		engine->SetViewAngles(cmd->viewangles);
 
 	Math::CorrectMovement(oldAngle, cmd, oldForward, oldSideMove);
+Ragebot::quickpeek(cmd);
+Ragebot::drawStartPos();
 }
 
 void Ragebot::FireGameEvent(IGameEvent* event)

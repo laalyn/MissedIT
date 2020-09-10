@@ -135,20 +135,20 @@ void Resolver::AnimationFix(C_BasePlayer *player)
 	globalVars->frametime = globalVars->interval_per_tick;
 
 	auto player_animation_state = player->GetAnimState();
-	// auto player_model_time = reinterpret_cast<int*>(player_animation_state + 112);
-	// if (player_animation_state && player_model_time)
-	// 	if (*player_model_time == globalVars->frametime)
-	// 		* player_model_time = globalVars->frametime - 1;
+	 auto player_model_time = reinterpret_cast<int*>(player_animation_state + 112);
+	 if (player_animation_state && player_model_time)
+	 	if (*player_model_time == globalVars->frametime)
+	 		* player_model_time = globalVars->frametime - 1;
 
 
-	// player->updateClientAnimation();
+	 player->updateClientAnimation();
 
 	globalVars->curtime = old_curtime;
 	globalVars->frametime = old_frametime;
 
-	//pEnt->SetAbsAngles(Vector3(0, player_animation_state->m_flGoalFeetYaw, 0));
+//	pEnt->SetAbsAngles(Vector3(0, player_animation_state->m_flGoalFeetYaw, 0));
 
-	// player->ClientAnimations(false);
+	player->ClientAnimations(false);
 }
 void Resolver::FrameStageNotify(ClientFrameStage_t stage)
 {
@@ -171,7 +171,6 @@ void Resolver::FrameStageNotify(ClientFrameStage_t stage)
 		{
 			//indx = i;
 			C_BasePlayer *player = (C_BasePlayer *)entityList->GetClientEntity(i);
-			// Resolver::AnimationFix(player);
 
 			if (!player 
 			|| player == localplayer 
@@ -206,9 +205,10 @@ void Resolver::FrameStageNotify(ClientFrameStage_t stage)
 				switch(Resolver::players[player->GetIndex()].MissedCount)
 				{
 					case 0:
-						player->GetAnimState()->goalFeetYaw = trueDelta == 0 ? player->GetEyeAngles()->y - 30.f: GetPercentVal(trueDelta, 60) + player->GetEyeAngles()->y;
+						//player->GetEyeAngles()->y += 115;
 						break;
 					case 1:
+		               player->GetAnimState()->goalFeetYaw = trueDelta == 0 ? player->GetEyeAngles()->y - 30.f: GetPercentVal(trueDelta, 60) + player->GetEyeAngles()->y;
 						break;
 					case 2:
 						player->GetEyeAngles()->y = trueDelta == 0 ? player->GetEyeAngles()->y - 30.f :  player->GetEyeAngles()->y + trueDelta;

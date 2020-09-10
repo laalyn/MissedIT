@@ -23,16 +23,26 @@ static float GetHitgroupDamageMultiplier(HitGroups iHitGroup)
 static void ScaleDamage(HitGroups hitgroup, C_BasePlayer* enemy, float weapon_armor_ratio, float& current_damage)
 {
 	current_damage *= GetHitgroupDamageMultiplier(hitgroup);
-
-	if (enemy->GetArmor() > 0)
+	int ArmorValue = enemy->GetArmor();
+	if (ArmorValue > 0)
 	{
-		if (hitgroup == HitGroups::HITGROUP_HEAD)
+			float Damage = current_damage;
+		float v47 = 1.f, ArmorBonusRatio = 0.5f, ArmorRatio = weapon_armor_ratio * 0.5f;
+		auto NewDamage = Damage * ArmorRatio;
+
+		if (((Damage - (Damage * ArmorRatio)) * (v47 * ArmorBonusRatio)) > ArmorValue)
 		{
-			if (enemy->HasHelmet())
-				current_damage *= weapon_armor_ratio * 0.5f;
+			NewDamage = Damage - (ArmorValue / ArmorBonusRatio);	
 		}
-		else
-			current_damage *= weapon_armor_ratio * 0.5f;
+
+		current_damage = Damage;
+		// if (hitgroup == HitGroups::HITGROUP_HEAD)
+		// {
+		// 	if (enemy->HasHelmet())
+		// 		current_damage *= weapon_armor_ratio * 0.5f;
+		// }
+		// else
+		// 	current_damage *= weapon_armor_ratio * 0.5f;
 	}
 }
 

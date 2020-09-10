@@ -27,6 +27,7 @@
 #include "../Hacks/ragdollgravity.h"
 #include "../Hacks/lagcomp.h"
 #include "../Hacks/fakeduck.h"
+#include "../Hacks/Tickbase.h"
 
 bool CreateMove::sendPacket = true;
 QAngle CreateMove::lastTickViewAngles = QAngle(0);
@@ -64,6 +65,7 @@ bool Hooks::CreateMove(void* thisptr, float flInputSampleTime, CUserCmd* cmd)
 		LagComp::CreateMove(cmd);
 		Legitbot::CreateMove(cmd);
 		Ragebot::CreateMove(cmd);
+		//Tickbase::run(cmd, CreateMove::sendPacket);
 		Triggerbot::CreateMove(cmd);
 		AutoKnife::CreateMove(cmd);
     	AntiAim::CreateMove(cmd);

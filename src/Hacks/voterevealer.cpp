@@ -15,18 +15,20 @@ if (!Settings::voterevealer::enabled)
 
 if (strstr(event->GetName(), XORSTR("vote_cast"))){ 
 	int vote_player_id = event->GetInt(XORSTR("entityid"));
-//	std::string team = event->GetString(XORSTR("team"));
 	IEngineClient::player_info_t playerInfo;
         engine->GetPlayerInfo( vote_player_id, &playerInfo );
-//	cvar->ConsoleDPrintf(std::string(playerInfo.name).c_str());
-//	cvar->ConsoleDPrintf(XORSTR(" Casted a vote\n"));
 	int option = event->GetInt("vote_option");
+	std::string votestring = "say ";
+	votestring += playerInfo.name;
         cvar->ConsoleDPrintf(std::string(playerInfo.name).c_str());
 		if (option == 0){
+	votestring += " Voted yes";
         cvar->ConsoleDPrintf(XORSTR(" Voted yes\n"));
 		}else{
+	        votestring += " Voted no";
+
         cvar->ConsoleDPrintf(XORSTR(" Voted no\n"));		
 		}
-	//cvar->ConsoleDPrintf(std::string(team).c_str());
+//engine->ExecuteClientCmd(votestring.c_str());
 }
 	}

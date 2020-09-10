@@ -42,6 +42,7 @@ static void RageAntiAIm()
             ImGui::ItemSize(ImVec2(0.0f, 0.0f), 0.0f);
             ImGui::Text(XORSTR("Yaw Offset"));
             ImGui::Checkbox(XORSTR("Pitch Jitter"), &Settings::AntiAim::RageAntiAim::pitchJitter);
+            ImGui::Checkbox(XORSTR("LBY Jitter"), &Settings::AntiAim::lbyjitter);
 
 	}
         ImGui::NextColumn();
@@ -251,12 +252,15 @@ if (Settings::AntiAim::SlowWalk::enabled){
             UI::KeyBindButton(&Settings::AntiAim::SlowWalk::key);
 
 }
-                        ImGui::Checkbox(XORSTR("Double Tap"), &Settings::Ragebot::DoubleTap);
-
+                        ImGui::Checkbox(XORSTR("QuickPeek"), &Settings::Ragebot::quickpeek::enabled);
+			if(Settings::Ragebot::quickpeek::enabled){
+				            UI::KeyBindButton(&Settings::Ragebot::quickpeek::key);
+								}
             ImGui::Checkbox(XORSTR("FakeDuck"), &Settings::AntiAim::FakeDuck::enabled);
         ImGui::SameLine(); 
             UI::KeyBindButton(&Settings::AntiAim::FakeDuck::fakeDuckKey);
-	    ImGui::Checkbox(XORSTR("Manual Resolver"), &Settings::Resolver::manual);
+		
+	    ImGui::Checkbox(XORSTR("Resolver Override"), &Settings::Resolver::manual);
 	if (Settings::Resolver::manual){
             ImGui::Checkbox(XORSTR("Force Bruteforce"), &Settings::Resolver::forcebrute);
 	    if (!Settings::Resolver::forcebrute){
@@ -265,6 +269,7 @@ if (Settings::AntiAim::SlowWalk::enabled){
 						}
 	}
             ImGui::Checkbox(XORSTR("AirSpin"), &Settings::AntiAim::airspin::enabled);
+            ImGui::SliderFloat(XORSTR("##TEST"), &Settings::Ragebot::test, 0, 125, XORSTR("DMG: %0.f"));
 
             ImGui::EndChild();
         }

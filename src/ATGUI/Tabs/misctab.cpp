@@ -19,6 +19,7 @@
 #include "../../Hacks/clantagchanger.h"
 #include "../../Hacks/valvedscheck.h"
 #include "../Windows/playerlist.h"
+#include "../Windows/configs.h"
 
 #pragma GCC diagnostic ignored "-Wformat-security"
 
@@ -28,6 +29,7 @@ static char nickname[127] = "";
 void Misc::RenderTab()
 {
 
+	const char* buyBotWeapons[] = {"buy defuser", "buy p250", "buy vesthelm", "buy mp7", "buy ak47", "buy m4a1", "buy awp", "buy scar20;buy g3sg1", "buy flashbang", "buy hegrenade", "buy smokegrenade", "buy deagle", "buy incgrenade; buy molotov", "buy decoy" };
 	const char* strafeTypes[] = { "Forwards", "Backwards", "Left", "Right", "Rage", "Directional" };
 	const char* animationTypes[] = { "Static", "Marquee", "Words", "Letters" };
         const char* musicType[] = { "CSGO", "CSGO2", "Crimson_Assault", "Sharpened", "Insurgency", "ADB", "High_Moon", "Deaths_Head_Demolition","Desert_Fire","LNOE","Metal","All_I_Want_for_Christmas","IsoRhythm","For_No_Mankind","Hotline_Miami","Total_Domination","The_Talos_Principle","Battlepack","MOLOTOV","Uber_Blasto_Phone","Hazardous_Environments","II-Headshot","The_8-Bit_Kit","I_Am","Diamonds","Invasion!","Lions_Mouth","Sponge_Fingerz","Disgusting","Java_Havana_Funkaloo","Moments_CSGO","Aggressive","The_Good_Youth","FREE","Lifes_Not_Out_to_Get_You","Backbone","GLA","III-Arena","EZ4ENCE" };
@@ -328,7 +330,11 @@ void Misc::RenderTab()
 					if ( Settings::buybot::enabled){
                                         ImGui::Checkbox(XORSTR("AutoSniper"), &Settings::buybot::autosniper);
                                         ImGui::Checkbox(XORSTR("Scout"), &Settings::buybot::scout);
+					//ImGui::Combo(XORSTR("##BUYBOTWEAPONS"), (int*)&Settings::buybot::type, buyBotWeapons, IM_ARRAYSIZE(buyBotWeapons));
 					}
+	                        if (ImGui::Button(XORSTR("Configs")) )
+                                Configs::showWindow = !Configs::showWindow;
+
 			ImGui::EndChild();
 		}
 	}
@@ -380,7 +386,7 @@ void Misc::RenderTab()
 
 			ImGui::SameLine();
 			if (ImGui::Button(XORSTR("Set Nickname"), ImVec2(-1, 0)))
-				NameChanger::SetName(std::string(nickname).c_str());
+			NameChanger::changeName(false, std::string(nickname).c_str(), 5.0f);
 
 			if (ImGui::Button(XORSTR("Glitch Name")))
 				NameChanger::SetName("\n\xAD\xAD\xAD");
@@ -422,11 +428,17 @@ void Misc::RenderTab()
 			}
 			if (ImGui::Button(XORSTR("Set Banned-Name")))
 			{
-				std::string banNameGlitch = " \x07";
-				banNameGlitch += std::string(nickname);
-				banNameGlitch += XORSTR(" \x07has been permanently banned from official CS:GO servers. \n \n \n \n \n \n \n \n \n \x01⠀ ");
-				NameChanger::SetName(banNameGlitch.c_str());
-			}
+std::string banText{ nickname };
+banText += " has been permanently banned from official CS:GO servers.";
+			//	NameChanger::SetName(std::string("\x1\xB7").append(std::string(nickname)).append(banText).c_str());
+      std::string res = " \x01\x0B";
+        res += (char)(NameChanger::Colors::LIGHT_RED);
+        res.append(banText);
+        res.append("\230");
+
+		//	    NameChanger::changeName(false, std::string{ "\x1\xB" }.append(std::string{ static_cast<char>(7) }).append(banText).append("\x1").c_str(), 5.0f);
+NameChanger::changeName(false, res.c_str(), 5.0f);
+	}
 
 
 			ImGui::Columns(1);
