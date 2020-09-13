@@ -880,13 +880,13 @@ if (!CreateMove::sendPacket)
     static auto Experimental([&](){
 
 if (AntiAim::LbyUpdate()){
-            AntiAim::fakeAngle.y = angle.y += inverted ? -120 : 120;
+            AntiAim::fakeAngle.y = angle.y += inverted ? -60 : 60;
 //AntiAim::bSend = false;
 }
 
 if (!AntiAim::bSend)
         {
-            AntiAim::realAngle.y = angle.y += inverted ? 120 : -120;
+            AntiAim::realAngle.y = angle.y += inverted ? 60 : -60;
 
 }
 if (AntiAim::bSend){

@@ -167,7 +167,7 @@ enum class BarType : int
 	VERTICAL_RIGHT,
 	HORIZONTAL,
 	HORIZONTAL_UP,
-	INTERWEBZ,
+	BATTERY,
 };
 
 enum class BarColorType : int
@@ -803,7 +803,12 @@ namespace Settings
 			inline int lastRoll = 0;
 		}
 	}
+    namespace SilentWalk
+    {
 
+	inline bool enabled;
+	inline ButtonCode_t key = ButtonCode_t::KEY_Z;
+    }
     namespace AntiAim
     {
 	inline bool lbyjitter;
@@ -894,7 +899,7 @@ namespace Settings
 		inline bool manual = false;
 		inline bool forcebrute = false;
 		inline bool resolveAllAP;
-                inline resolverType resolverType = resolverType::Experimental;
+                inline resolverType resolverType = resolverType::NONE;
 
 	}
 

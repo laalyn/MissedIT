@@ -635,6 +635,95 @@ static void DrawBoneMap( C_BasePlayer* player ) {
 	engine->GetPlayerInfo( player->GetIndex(), &entityInformation );
 	cvar->ConsoleDPrintf( XORSTR( "(%s)-ModelName: %s, numBones: %d\n" ), entityInformation.name, pStudioModel->name, pStudioModel->numbones );
 }
+static void DrawAATrace( QAngle fake, QAngle actual ) {
+        C_BasePlayer* localPlayer = ( C_BasePlayer* ) entityList->GetClientEntity( engine->GetLocalPlayer() );
+        Vector src3D, dst3D, forward;
+        Vector src, dst;
+        trace_t tr;
+        Ray_t ray;
+        CTraceFilter filter;
+        char* string;
+        Vector2D nameSize;
+        ImColor color;
+
+        filter.pSkip = localPlayer;
+        src3D = localPlayer->GetVecOrigin();
+// LBY
+        Math::AngleVectors( QAngle(0, *localPlayer->GetLowerBodyYawTarget(), 0), forward );
+        dst3D = src3D + ( forward * 50 );
+
+        ray.Init( src3D, dst3D );
+
+        trace->TraceRay( ray, MASK_SHOT, &filter, &tr );
+
+        if ( debugOverlay->ScreenPosition( src3D, src ) || debugOverlay->ScreenPosition( tr.endpos, dst ) )
+                return;
+
+        color = ImColor( 135, 235, 169 );
+        Draw::AddLine( src.x, src.y, dst.x, dst.y, color );
+//      Draw::AddRectFilled( ( int ) ( dst.x - 3 ), ( int ) ( dst.y - 3 ), 6, 6, color );
+        string = XORSTR("LBY");
+        nameSize = Draw::GetTextSize( string, esp_font );
+        Draw::AddText(dst.x, dst.y, string, color );
+//////////////////////////////////
+
+// FAKE
+        Math::AngleVectors( QAngle(0, fake.y, 0), forward );
+        dst3D = src3D + ( forward * 50.f );
+
+        ray.Init( src3D, dst3D );
+
+        trace->TraceRay( ray, MASK_SHOT, &filter, &tr );
+
+        if ( debugOverlay->ScreenPosition( src3D, src ) || debugOverlay->ScreenPosition( tr.endpos, dst ) )
+                return;
+
+        color = ImColor( 5, 200, 5 );
+        Draw::AddLine( src.x, src.y, dst.x, dst.y, color );
+//      Draw::AddRectFilled( ( int ) ( dst.x - 3 ), ( int ) ( dst.y - 3 ), 6, 6, color );
+        string = XORSTR("FAKE");
+        nameSize = Draw::GetTextSize( string, esp_font );
+        Draw::AddText(dst.x, dst.y, string, color );
+//////////////////////////////////
+
+// ACTUAL
+        Math::AngleVectors( QAngle(0, actual.y, 0), forward );
+        dst3D = src3D + ( forward * 50.f );
+
+        ray.Init( src3D, dst3D );
+
+        trace->TraceRay( ray, MASK_SHOT, &filter, &tr );
+
+        if ( debugOverlay->ScreenPosition( src3D, src ) || debugOverlay->ScreenPosition( tr.endpos, dst ) )
+                return;
+
+        color = ImColor( 225, 5, 5 );
+        Draw::AddLine( src.x, src.y, dst.x, dst.y, color );
+//      Draw::AddRectFilled( ( int ) ( dst.x - 3 ), ( int ) ( dst.y - 3 ), 6, 6, color );
+        string = XORSTR("REAL");
+        nameSize = Draw::GetTextSize( string, esp_font );
+        Draw::AddText(dst.x, dst.y, string, color );
+//////////////////////////////////
+
+// FEET YAW
+        Math::AngleVectors( QAngle(0, localPlayer->GetAnimState()->currentFeetYaw, 0), forward );
+        dst3D = src3D + ( forward * 50.f );
+
+        ray.Init( src3D, dst3D );
+
+        trace->TraceRay( ray, MASK_SHOT, &filter, &tr );
+
+        if ( debugOverlay->ScreenPosition( src3D, src ) || debugOverlay->ScreenPosition( tr.endpos, dst ) )
+                return;
+
+        color = ImColor( 225, 225, 80 );
+        Draw::AddLine( src.x, src.y, dst.x, dst.y, color );
+//      Draw::AddRectFilled( ( int ) ( dst.x - 3 ), ( int ) ( dst.y - 3 ), 6, 6, color );
+        string = XORSTR("FEET");
+        nameSize = Draw::GetTextSize( string, esp_font );
+        Draw::AddText(dst.x, dst.y, string, color );
+//////////////////////////////////
+}
 
 static void DrawAutoWall(C_BasePlayer *player) {
 	const std::unordered_map<int, int> *modelType = BoneMaps::GetModelTypeBoneMap(player);
@@ -928,6 +1017,25 @@ static void DrawPlayerHealthBars( C_BasePlayer* player, int x, int y, int w, int
 		}
 		barsSpacing.y += barh;
 	}
+        else if ( bartype == BarType::BATTERY) {
+
+float flBoxes = std::ceil(player->GetHealth() / 10.f );
+  barw = 4; // outline(1px) + bar(2px) + outline(1px) = 6px;
+                barx -= barw + boxSpacing; // spacing(1px) + outline(1px) + bar(2px) + outline (1px) = 8 px
+	float flX = x - 7 - barh / 4.f; float flY = y - 1;
+	float flHeight = barh / 10.f;
+	float flMultiplier = 12 / 360.f; flMultiplier *= flBoxes - 1;
+	Color ColHealth = Color::FromHSB( flMultiplier, 1, 1 );
+
+	 Draw::AddRectFilled( flX, flY, 4, barh + 2, ImColor( 80, 80, 80, 125 ) );
+	Draw::AddRect( flX, flY, 4, barh + 2, ImColor( 10, 10, 10, 255 ) );
+	Draw::AddRectFilled( flX + 1, flY, 2, flHeight * flBoxes + 1, barColor );
+
+	for ( int i = 0; i < 10; i++ )
+		Draw::AddLine( flX, flY + i * flHeight, flX + 4, flY + i * flHeight, ImColor( 10, 10, 10, 255 ) );
+
+        barsSpacing.y += barh;
+}
 }
 
 static void DrawPlayerText( C_BasePlayer* player, C_BasePlayer* localplayer, int x, int y, int w, int h ) {
@@ -1904,6 +2012,10 @@ void ESP::Paint()
 	ConVar* cvar_name = cvar->FindVar(XORSTR("sv_showimpacts"));
 	cvar_name->SetValue(1);
 	}
+if (Settings::ThirdPerson::toggled)
+{
+DrawAATrace(AntiAim::fakeAngle, AntiAim::realAngle);
+}
  if (Settings::AntiAim::ManualAntiAim::Enable)
     {
 

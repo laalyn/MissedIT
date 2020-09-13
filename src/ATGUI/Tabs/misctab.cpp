@@ -456,6 +456,8 @@ NameChanger::changeName(false, res.c_str(), 5.0f);
 				ImGui::Checkbox(XORSTR("Sniper Crosshair"), &Settings::SniperCrosshair::enabled);
 				ImGui::Checkbox(XORSTR("Disable post-processing"), &Settings::DisablePostProcessing::enabled);
 				ImGui::Checkbox(XORSTR("No Duck Cooldown"), &Settings::NoDuckCooldown::enabled);
+                                ImGui::Checkbox(XORSTR("Silent Walk"), &Settings::SilentWalk::enabled);
+
 			}
 			ImGui::NextColumn();
 			{

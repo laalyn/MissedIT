@@ -28,6 +28,7 @@
 #include "../Hacks/lagcomp.h"
 #include "../Hacks/fakeduck.h"
 #include "../Hacks/Tickbase.h"
+#include "../Hacks/silentWalk.h"
 
 bool CreateMove::sendPacket = true;
 QAngle CreateMove::lastTickViewAngles = QAngle(0);
@@ -49,6 +50,7 @@ bool Hooks::CreateMove(void* thisptr, float flInputSampleTime, CUserCmd* cmd)
 
 		/* run code that affects movement before prediction */
 		BHop::CreateMove(cmd);
+                SilentWalk::CreateMove(cmd);
 		NoDuckCooldown::CreateMove(cmd);
 		AutoStrafe::CreateMove(cmd);
 		ShowRanks::CreateMove(cmd);
@@ -59,7 +61,6 @@ bool Hooks::CreateMove(void* thisptr, float flInputSampleTime, CUserCmd* cmd)
         EdgeJump::PrePredictionCreateMove(cmd);
 		Autoblock::CreateMove(cmd);
 		NoFall::PrePredictionCreateMove(cmd);
-
 		PredictionSystem::StartPrediction(cmd);
 		FakeLag::CreateMove(cmd);
 		LagComp::CreateMove(cmd);
