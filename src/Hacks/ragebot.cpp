@@ -563,7 +563,7 @@ static void RagebotAutoR8(C_BasePlayer* player, C_BasePlayer* localplayer, C_Bas
 	if (*activeWeapon->GetItemDefinitionIndex() == ItemDefinitionIndex::WEAPON_REVOLVER)
 	{		
 		cmd->buttons |= IN_ATTACK;
-
+Ragebot::r8p = true;
     	float postponeFireReadyTime = activeWeapon->GetPostPoneReadyTime();
 		if (player)
 		{
@@ -577,9 +577,11 @@ static void RagebotAutoR8(C_BasePlayer* player, C_BasePlayer* localplayer, C_Bas
 		}
 		else if (postponeFireReadyTime < globalVars->curtime )
 			cmd->buttons &= ~IN_ATTACK;
-
 		return;
 	}
+else { 
+Ragebot::r8p = false;
+}
 }
 
 static void RagebotAutoShoot(C_BasePlayer* player, C_BasePlayer* localplayer, C_BaseCombatWeapon* activeWeapon, CUserCmd* cmd, Vector& bestspot, QAngle& angle, float& forrwordMove, float& sideMove, const RageWeapon_t& currentSettings)
@@ -591,8 +593,8 @@ static void RagebotAutoShoot(C_BasePlayer* player, C_BasePlayer* localplayer, C_
     CSWeaponType weaponType = activeWeapon->GetCSWpnData()->GetWeaponType();
     if (weaponType == CSWeaponType::WEAPONTYPE_KNIFE || weaponType == CSWeaponType::WEAPONTYPE_C4 || weaponType == CSWeaponType::WEAPONTYPE_GRENADE)
 		return;
-	if (*activeWeapon->GetItemDefinitionIndex() == ItemDefinitionIndex::WEAPON_REVOLVER)
-		return;
+//	if (*activeWeapon->GetItemDefinitionIndex() == ItemDefinitionIndex::WEAPON_REVOLVER)
+//		return;
 		
 	if ( canShoot(cmd, localplayer, activeWeapon, bestspot, player, currentSettings) )
 	{
@@ -920,6 +922,7 @@ void Ragebot::CreateMove(CUserCmd* cmd)
 			player = GetClosestPlayerAndSpot(localplayer, currentWeaponSetting);
 			break;
 	}
+        RagebotAutoR8(player, localplayer, activeWeapon, cmd, Ragebot::BestSpot, angle, oldForward, oldSideMove, currentWeaponSetting);
 
     if (player && Ragebot::BestDamage > Settings::Ragebot::test)
     {
@@ -930,7 +933,6 @@ void Ragebot::CreateMove(CUserCmd* cmd)
 		Settings::Debug::AutoAim::target = Ragebot::BestSpot;
 
 		RagebotAutoShoot(player, localplayer, activeWeapon, cmd, Ragebot::BestSpot, angle, oldForward, oldSideMove, currentWeaponSetting);
-    	RagebotAutoR8(player, localplayer, activeWeapon, cmd, Ragebot::BestSpot, angle, oldForward, oldSideMove, currentWeaponSetting);
 		RagebotAutoCrouch(player, cmd, activeWeapon, currentWeaponSetting);
 
 		if (cmd->buttons & IN_ATTACK)

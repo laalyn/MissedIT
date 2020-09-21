@@ -11,6 +11,7 @@
 #include "Hacks/spammer.h"
 #include "Hacks/valvedscheck.h"
 #include "Hacks/voterevealer.h"
+#include "Hacks/esp.h"
 #include "interfaces.h"
 #include "SDK/IGameEvent.h"
 #include "settings.h"
@@ -39,6 +40,7 @@ void EventListener::FireGameEvent(IGameEvent* event)
     Spammer::FireGameEvent(event);
     ValveDSCheck::FireGameEvent(event);
     SkinChanger::FireGameEvent(event);
+    ESP::FireGameEvent(event);
 }
 
 int EventListener::GetEventDebugID()

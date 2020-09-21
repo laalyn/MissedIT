@@ -29,6 +29,7 @@
 #include "../Hacks/fakeduck.h"
 #include "../Hacks/Tickbase.h"
 #include "../Hacks/silentWalk.h"
+#include "../Hacks/quickswitch.h"
 
 bool CreateMove::sendPacket = true;
 QAngle CreateMove::lastTickViewAngles = QAngle(0);
@@ -74,6 +75,7 @@ bool Hooks::CreateMove(void* thisptr, float flInputSampleTime, CUserCmd* cmd)
 		FakeWalk::CreateMove(cmd);
 		ESP::CreateMove(cmd);
 		TracerEffect::CreateMove(cmd);
+ 		QuickSwitch::CreateMove(cmd);
 		RagdollGravity::CreateMove(cvar);
 		PredictionSystem::EndPrediction();
 		

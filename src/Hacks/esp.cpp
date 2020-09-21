@@ -1352,6 +1352,7 @@ if (!(strstr(event->GetName(), XORSTR("bullet_impact"))))
                 float x = event->GetFloat(XORSTR("x"));
 		float y = event->GetFloat(XORSTR("y"));
                 float z = event->GetFloat(XORSTR("z"));
+ Draw::AddCircleFilled(x, y, 200, Settings::ESP::FOVCrosshair::color.Color(), std::max(12, (int)100*2));
 
 
 }
@@ -2023,7 +2024,12 @@ DrawAATrace(AntiAim::fakeAngle, AntiAim::realAngle);
 }
 DrawIndicators();
 }
-
+void ESP::FireGameEvent(IGameEvent* event)
+{
+        if(!event)      
+	return;
+DrawImpacts(event);
+}
 void ESP::DrawModelExecute()
 {
 	if (!Settings::ESP::enabled)

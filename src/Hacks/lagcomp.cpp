@@ -3,6 +3,7 @@
 #include "../Utils/math.h"
 #include "../interfaces.h"
 #include "../settings.h"
+#include "../SDK/INetChannel.h"
 
 // source from nimbus bcz i am lezy xd
 #ifndef CLAMP
@@ -14,6 +15,7 @@ std::vector<LagComp::LagCompTickInfo> LagComp::lagCompTicks;
 
 float LagComp::GetLerpTime()
 {
+//  auto network = INetChannel->getNetChannel();
 	int updateRate = cvar->FindVar("cl_updaterate")->GetInt();
 	ConVar *minUpdateRate = cvar->FindVar("sv_minupdaterate");
 	ConVar *maxUpdateRate = cvar->FindVar("sv_maxupdaterate");

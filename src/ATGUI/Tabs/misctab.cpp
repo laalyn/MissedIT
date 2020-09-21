@@ -472,6 +472,7 @@ NameChanger::changeName(false, res.c_str(), 5.0f);
 				ImGui::Checkbox(XORSTR("Ragdoll Gravity"), &Settings::RagdollGravity::enabled);
 				ImGui::Checkbox(XORSTR("Show Spectator list"), &Settings::ShowSpectators::enabled);
 				ImGui::Checkbox(XORSTR("Show Player list"), &PlayerList::showWindow);
+			        ImGui::Checkbox(XORSTR("AWP Quick Switch"), &Settings::QuickSwitch::enabled);
 			}
 			ImGui::Columns(1);
 			ImGui::Separator();

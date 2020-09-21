@@ -21,6 +21,10 @@ static void RageAntiAIm()
         "Random",
     };
 
+const char* lbyType[] = {
+	"Normal",
+	"Opposite",
+};
     const char* RageAntiAimType[] = {
         "Default Rage",
         "Fake Arround Real",
@@ -121,6 +125,10 @@ static void RageAntiAIm()
         ImGui::SliderFloat(XORSTR("##EDGEDISTANCE"), &Settings::AntiAim::HeadEdge::distance, 20, 30, "Distance: %0.0f");
         ImGui::PopItemWidth();
     }
+    ImGui::Spacing(); ImGui::Spacing();
+    ImGui::Columns(1);
+    ImGui::Combo(XORSTR("##LbyType"), (int*)&Settings::AntiAim::RageAntiAim::lbym, lbyType, IM_ARRAYSIZE(lbyType));
+    ImGui::Text(XORSTR("LBY Mode"));
 
     /*
     ** Starting of Manual anti aim
@@ -129,7 +137,7 @@ static void RageAntiAIm()
     ImGui::Columns(1);
     ImGui::Checkbox(XORSTR("##Manual Anti Aim"), &Settings::AntiAim::ManualAntiAim::Enable);
     ImGui::SameLine();
-    ImGui::Text(XORSTR("Manuan AntiAim"));
+    ImGui::Text(XORSTR("Manual AntiAim"));
 
     //For player to move right
     ImGui::Text("Align Right");

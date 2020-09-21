@@ -233,6 +233,12 @@ enum class AntiAimType : int
 	Lagacy,
 };
 
+enum class LbyMode : int
+{
+	Normal,
+	Opposite,
+};
+
 enum class RageAntiAimType : int
 {
 	DefaultRage,
@@ -811,6 +817,8 @@ namespace Settings
     }
     namespace AntiAim
     {
+
+
 	inline bool lbyjitter;
 	namespace airspin
 		{
@@ -845,7 +853,8 @@ namespace Settings
 			inline bool atTheTarget = false;
 			inline bool SendReal = false;
 			inline RageAntiAimType Type = RageAntiAimType::RealArroundFake;
-        }
+        		inline LbyMode lbym = LbyMode::Normal;
+	}
 		namespace LegitAntiAim 
 		{
 			inline bool enable = false;
@@ -1732,6 +1741,12 @@ namespace Settings
  			inline bool allies = false;
  		}
  	}
+
+	namespace QuickSwitch
+	{
+		extern bool enabled;
+	}
+
 	namespace AngleIndicator
 	{
 		inline bool enabled = false;

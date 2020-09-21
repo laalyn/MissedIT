@@ -343,6 +343,7 @@ static void DefaultRageAntiAim(C_BasePlayer *const localplayer, QAngle& angle, C
 	}
 	else if ( !inputSystem->IsButtonDown(InvertKey) && buttonToggle)
 		buttonToggle = false;
+if (Settings::AntiAim::RageAntiAim::lbym == LbyMode::Normal){
 
     if(AntiAim::bSend)
     {
@@ -353,12 +354,7 @@ static void DefaultRageAntiAim(C_BasePlayer *const localplayer, QAngle& angle, C
                 break;
 
             case AntiAimFakeType_y::Static:
-               // AntiAim::fakeAngle.y = cmd->viewangles.y = inverted ? (angle.y-180.f)+GetPercentVal(maxDelta/2, AntiAImPercent) : (angle.y-180.f)-GetPercentVal(maxDelta/2, AntiAImPercent);
-                       bool side;
-			side = (cmd->tick_count % 10) ? !inverted : inverted;
-                        inverted = side;
-			AntiAim::fakeAngle.y = angle.y += cmd->tick_count % 200 ? 0 : -58;
-                 	AntiAim::fakeAngle.y = angle.y += cmd->tick_count % 900 ? 0 : 180;
+                AntiAim::fakeAngle.y = angle.y = inverted ? (angle.y-180.f)+GetPercentVal(maxDelta/2, AntiAImPercent) : (angle.y-180.f)-GetPercentVal(maxDelta/2, AntiAImPercent);
 		   break;
 
             case AntiAimFakeType_y::Jitter:
@@ -398,9 +394,21 @@ static void DefaultRageAntiAim(C_BasePlayer *const localplayer, QAngle& angle, C
                     break;
         }
     }
-
+}
     // LBYBreak(AntiAim::realAngle.y, angle, localplayer);
-    
+   else if (Settings::AntiAim::RageAntiAim::lbym == LbyMode::Opposite){
+if (AntiAim::LbyUpdate()){
+            AntiAim::fakeAngle.y = angle.y += inverted ? -120 : 120;
+}
+
+if (!AntiAim::bSend)
+        {
+            AntiAim::realAngle.y = angle.y += inverted ? 120 : -120;
+
+}
+
+}
+
 }
 
 static void LJitterAntiAim(C_BasePlayer *const localplayer, QAngle& angle, CUserCmd* cmd)
@@ -408,13 +416,12 @@ static void LJitterAntiAim(C_BasePlayer *const localplayer, QAngle& angle, CUser
 
     if (!localplayer || !localplayer->GetAlive())
         return;
-if (localplayer->GetImmune())
-      return;
-QAngle anglei;
-          // C_BasePlayer* lockedTarget = Ragebot::lockedEnemy.player;
-            if (Ragebot::lockedEnemy.player)
+    if (localplayer->GetImmune())
+      	return;
+
+	QAngle anglei;
+       	if (Ragebot::lockedEnemy.player)
                anglei = Math::CalcAngle(localplayer->GetEyePosition(), Ragebot::lockedEnemy.player->GetEyePosition());
-  
 
 
   if(AntiAim::bSend)
@@ -460,7 +467,18 @@ AntiAim::realAngle.y = angle.y += Settings::AntiAim::RageAntiAim::offset;
 }
 }
 }
-//LBYBreak(AntiAim::realAngle.y, angle, localplayer);
+if (Settings::AntiAim::RageAntiAim::lbym == LbyMode::Opposite){
+if (AntiAim::LbyUpdate()){
+            AntiAim::fakeAngle.y = angle.y += Settings::AntiAim::RageAntiAim::offset + -60;
+}
+
+if (!AntiAim::bSend)
+        {
+            AntiAim::realAngle.y = angle.y += Settings::AntiAim::RageAntiAim::offset + 60;
+
+}
+
+}
 }
 static void FakeArrondReal(C_BasePlayer *const localplayer, QAngle& angle, CUserCmd* cmd)
 {
@@ -878,7 +896,7 @@ if (!CreateMove::sendPacket)
             AntiAim::fakeAngle = angle;
     });
     static auto Experimental([&](){
-
+//OT CALLS THIS OPPOSITE LBY MODE FOR RAGE AND EXTEND DESYNC ON LEGIT (while also doing some weird shit).
 if (AntiAim::LbyUpdate()){
             AntiAim::fakeAngle.y = angle.y += inverted ? -60 : 60;
 //AntiAim::bSend = false;
@@ -989,7 +1007,7 @@ static bool canMove(C_BasePlayer* localplayer, C_BaseCombatWeapon* activeweapon,
         if (postponTime < globalVars->curtime )
             return true;
     }
-    if (cmd->buttons & IN_ATTACK)
+    if (cmd->buttons & IN_ATTACK && Ragebot::r8p == false)
         return false;
     if ( cmd->buttons & IN_USE )
         return false;
