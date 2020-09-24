@@ -358,11 +358,11 @@ if (Settings::AntiAim::RageAntiAim::lbym == LbyMode::Normal){
 		   break;
 
             case AntiAimFakeType_y::Jitter:
-                static bool bFlip = false;
-                bFlip = !bFlip;
-//                AntiAim::fakeAngle.y = angle.y = bFlip ?  (angle.y-180.f)-GetPercentVal(maxDelta/2, AntiAImPercent) : (angle.y-180.f)+GetPercentVal(maxDelta/2, AntiAImPercent);
-                AntiAim::fakeAngle.y = angle.y = bFlip ?  (angle.y-165.f)-GetPercentVal(maxDelta/2, AntiAImPercent) : (angle.y-165.f)+GetPercentVal(maxDelta/2, AntiAImPercent);
-
+                       bool side;
+                        side = (cmd->tick_count % 10) ? !inverted : inverted;
+                        inverted = side;
+                        AntiAim::fakeAngle.y = angle.y += cmd->tick_count % 200 ? 0 : -58;
+                        AntiAim::fakeAngle.y = angle.y += cmd->tick_count % 900 ? 0 : 180;
                 break;
 
             case AntiAimFakeType_y::Randome:
@@ -470,10 +470,9 @@ AntiAim::realAngle.y = angle.y += Settings::AntiAim::RageAntiAim::offset;
 if (Settings::AntiAim::RageAntiAim::lbym == LbyMode::Opposite){
 if (AntiAim::LbyUpdate()){
             AntiAim::realAngle.y = angle.y += Settings::AntiAim::RageAntiAim::offset + -120;
-}
-
-if (!AntiAim::bSend)
-        {
+    CreateMove::sendPacket = false;
+}else    {
+  //CreateMove::sendPacket = tickcount % 2;
             AntiAim::fakeAngle.y = angle.y += Settings::AntiAim::RageAntiAim::offset + 120;
 
 }
@@ -897,38 +896,18 @@ if (!CreateMove::sendPacket)
     });
     static auto Experimental([&](){
 //OT CALLS THIS OPPOSITE LBY MODE FOR RAGE AND EXTEND DESYNC ON LEGIT (while also doing some weird shit).
-if (AntiAim::LbyUpdate()){
-            AntiAim::realAngle.y = angle.y += inverted ? -60 : 60;
-//AntiAim::bSend = false;
-}
-
-if (!AntiAim::bSend)
-        {
-            AntiAim::fakeAngle.y = angle.y += inverted ? 60 : -60;
-
-}
-if (AntiAim::bSend){
-if (AntiAim::LbyUpdate()){
-//            AntiAim::fakeAngle.y = angle.y += inverted ? -120 : 120;
-            //AntiAim::fakeAngle = angle;
-
-}
-}
-else if (!AntiAim::bSend){
-//            AntiAim::realAngle.y = angle.y += inverted ? 55 : -55;
-
-}
-if (!AntiAim::bSend)
-        {
-             //localplayer->GetAnimState()->goalFeetYaw = inverted ? maxDelta : -maxDelta;
-            //AntiAim::realAngle.y = angle.y += inverted ? -120 : 120;
-                  // AntiAim::realAngle.y = angle.y += inverted ? maxDelta : maxDelta*-1;
-         }
-        else{
-            //localplayer->GetAnimState()->goalFeetYaw = inverted ? maxDelta*-1 : maxDelta;
-            //AntiAim::fakeAngle = angle;
-        }
-
+		static int tickcount = cmd->tick_count;
+auto sendPacket = CreateMove::sendPacket;
+    if (AntiAim::LbyUpdate) {
+        cmd->viewangles.y += sendPacket ? -60 : 60; // Make this opposite of desync delta to create extended LBY desync
+        sendPacket = false;
+    } else {
+        // Alternate packet sending each tick
+        // You could also do fakelag in a separate function
+        sendPacket = tickcount % 2;
+     
+        cmd->viewangles.y += sendPacket ? 120 : -120;
+    }
  
    });
 

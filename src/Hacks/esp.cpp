@@ -119,7 +119,6 @@ static void DrawManualAntiaim()
 Vector2D indSize = Draw::GetTextSize( "v", astrium );
 int x = 960;
 int y = 520;
-
     if (Settings::AntiAim::ManualAntiAim::Enable)
     {
         if (AntiAim::ManualAntiAim::alignLeft) {

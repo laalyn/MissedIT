@@ -5,6 +5,7 @@
 #include "../Utils/draw.h"
 #include "fakelag.h"
 #include "../Utils/patternfinder.h"
+#include "../SDK/definitions.h"
 
 bool canShift(int ticks, bool shiftAnyways = false)
 {
@@ -43,6 +44,51 @@ bool canShift(int ticks, bool shiftAnyways = false)
     return true;
 }
 //THANK YOU DoomFishWasTaken and everyone who worked on this https://github.com/danielkrupinski/Osiris/pull/2074
+//static bool  WriteUsercmdDeltaToBuffer(void* ecx, void* edx, int slot, void* buffer, int from, int to, bool isnewcommand) noexcept
+//{
+/*
+    if (from != -1)
+        return true;
+
+    int* numBackupCommands = (int*)(reinterpret_cast <uintptr_t> (buffer) - 0x30);
+    int* numNewCommands = (int*)(reinterpret_cast <uintptr_t> (buffer) - 0x2C);
+
+    int32_t newcommands = *numNewCommands;
+
+    int nextcommmand;
+    int totalcommands = std::min(Tickbase::tick->tickshift, Tickbase::tick->maxUsercmdProcessticks);
+    Tickbase::tick->tickshift = 0;
+
+    from = -1;
+    *numNewCommands = totalcommands;
+    *numBackupCommands = 0;
+
+    for (to = nextcommmand - newcommands + 1; to <= nextcommmand; to++)
+    {
+        from = to;
+    }
+
+    //UserCmd* lastRealCmd = memory->input->GetUserCmd(slot, from);
+    UserCmd* fromcmd;
+
+   // if (lastRealCmd)
+     //   fromcmd = *lastRealCmd;
+
+    UserCmd tocmd = fromcmd;
+    tocmd.tickCount += 200;
+    tocmd.commandNumber++;
+
+    for (int i = newcommands; i <= totalcommands; i++)
+    {
+        //WriteUsercmd(buffer, &tocmd, &fromcmd);
+        fromcmd = tocmd;
+        tocmd.commandNumber++;
+        tocmd.tickCount++;
+    }
+
+    return true;
+*/
+//}
 void recalculateTicks() 
 {
     Tickbase::tick->chokedPackets = std::clamp(Tickbase::tick->chokedPackets, 0, Tickbase::tick->maxUsercmdProcessticks);

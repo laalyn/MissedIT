@@ -37,13 +37,16 @@ Vector CalculateAngle(Vector src, Vector dst)
         return angles;
 }
 
-float NormalizeAsYaw(float yaw)
+static float NormalizeAsYaw(float flAngle)
 {
-        while (yaw < -180.f)
-                yaw += 360.f;
-        while (yaw > 180.f)
-                yaw -= 360.f;
-        return yaw;
+	if (flAngle > 180.f || flAngle < -180.f)
+	{
+		if (flAngle < 0.f)
+			flAngle += round(abs(flAngle));
+		else
+			flAngle -= round(abs(flAngle));
+	}
+	return flAngle;
 }
 			
 float GetBackwardYaw(C_BasePlayer* player) {
@@ -182,19 +185,18 @@ void Resolver::FrameStageNotify(ClientFrameStage_t stage)
 
 			IEngineClient::player_info_t entityInformation;
 			engine->GetPlayerInfo(i, &entityInformation);
-
-			// if (!Settings::Resolver::resolveAll && std::find(Resolver::Players.begin(), Resolver::Players.end(), entityInformation.xuid) == Resolver::Players.end())
-			// 	continue;
-
-			/*
-			cvar->ConsoleColorPrintf(ColorRGBA(64, 0, 255, 255), XORSTR("\n[Nimbus] "));
-			cvar->ConsoleDPrintf("Debug log here!");
-			*/
-
-			// Tanner is a sex bomb, also thank you Stacker for helping us out!
-			// float lbyDelta = fabsf(NormalizeAsYaw(*player->GetLowerBodyYawTarget() - player->GetEyeAngles()->y));
-
-			// cvar->ConsoleDPrintf(XORSTR("X Axis : %f\n"), player->GetEyeAngles()->x);
+	if ( Resolver::players[player->GetIndex()].enemy )
+			{
+				if (player != Resolver::players[player->GetIndex()].enemy) // It means player discoennected or player sequence changed better to reset out miss shots count
+				{
+					Resolver::players[player->GetIndex()].MissedCount = 0;
+					Resolver::players[player->GetIndex()].enemy = player;
+				}
+			}
+			else 
+			{
+				Resolver::players[player->GetIndex()].enemy = player;
+			}
 			if (!Settings::Resolver::manual){
 			if (player->GetEyeAngles()->x < 65.f || player->GetEyeAngles()->x > 90.f)
 			{
@@ -227,21 +229,6 @@ void Resolver::FrameStageNotify(ClientFrameStage_t stage)
 			else
             {
                 float trueDelta = NormalizeAsYaw(*player->GetLowerBodyYawTarget() - player->GetEyeAngles()->y);
-				
-				if ( Resolver::players[player->GetIndex()].enemy )
-				{
-					if (player != Resolver::players[player->GetIndex()].enemy) // It means player discoennected or player sequence changed better to reset out miss shots count
-					{
-						Resolver::players[player->GetIndex()].MissedCount = 0;
-						Resolver::players[player->GetIndex()].enemy = player;
-					}
-						
-				}
-				else 
-				{
-					Resolver::players[player->GetIndex()].enemy = player;
-				}
-					
 
 
 				//cvar->ConsoleDPrintf(XORSTR("Resolving : Rage AA\n"));
