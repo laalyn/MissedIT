@@ -3,7 +3,6 @@
 #include "../settings.h"
 #include "../interfaces.h"
 
-bool Settings::QuickSwitch::enabled = false;
 
 void QuickSwitch::CreateMove(CUserCmd *cmd)
 {

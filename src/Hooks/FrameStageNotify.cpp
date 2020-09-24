@@ -15,6 +15,7 @@
 #include "../settings.h"
 #include "../Hacks/lagcomp.h"
 #include "../Hacks/antiaim.h"
+#include "../Hacks/svcheats.h"
 
 typedef void (*FrameStageNotifyFn) (void*, ClientFrameStage_t);
 
@@ -32,7 +33,7 @@ void Hooks::FrameStageNotify(void* thisptr, ClientFrameStage_t stage)
 	ASUSWalls::FrameStageNotify(stage);
 	NoSmoke::FrameStageNotify(stage);
 	ThirdPerson::FrameStageNotify(stage);
-
+SvCheats::FrameStageNotify(stage);
 	if (SkinChanger::forceFullUpdate)
 	{
 		GetLocalClient(-1)->m_nDeltaTick = -1;

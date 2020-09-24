@@ -315,18 +315,19 @@ void Resolver::FrameStageNotify(ClientFrameStage_t stage)
 			}
 			else {
 			if ( !Settings::Resolver::forcebrute){
-			cvar->ConsoleDPrintf(XORSTR("Manual Resolver\n"));
+			//cvar->ConsoleDPrintf(XORSTR("Manual Resolver\n"));
 			player->GetAnimState()->goalFeetYaw += Settings::Resolver::goalFeetYaw;
 			player->GetEyeAngles()->y += Settings::Resolver::EyeAngles;
+			 player->GetEyeAngles()->x = Settings::Resolver::Pitch;
 			}else if ( Settings::Resolver::forcebrute){
  float trueDelta = NormalizeAsYaw(*player->GetLowerBodyYawTarget() - player->GetEyeAngles()->y);
  float maxDesync = AntiAim::GetMaxDelta(player->GetAnimState());
  int mD = (int) maxDesync;
                                         float randNum = rand()%(mD-(-mD) + 1) + -mD;
-			                        cvar->ConsoleDPrintf(XORSTR("Forcing bruteforce resolver\n"));
-cvar->ConsoleDPrintf(XORSTR("Current Yaw: "));
-cvar->ConsoleDPrintf(std::to_string(randNum).c_str());
-cvar->ConsoleDPrintf(XORSTR("\n"));
+			                      //  cvar->ConsoleDPrintf(XORSTR("Forcing bruteforce resolver\n"));
+//cvar->ConsoleDPrintf(XORSTR("Current Yaw: "));
+//cvar->ConsoleDPrintf(std::to_string(randNum).c_str());
+//cvar->ConsoleDPrintf(XORSTR("\n"));
 
 			player->GetEyeAngles( )->y += randNum;
 			}

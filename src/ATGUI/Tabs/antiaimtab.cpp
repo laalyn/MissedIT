@@ -127,9 +127,19 @@ const char* lbyType[] = {
     }
     ImGui::Spacing(); ImGui::Spacing();
     ImGui::Columns(1);
-    ImGui::Combo(XORSTR("##LbyType"), (int*)&Settings::AntiAim::RageAntiAim::lbym, lbyType, IM_ARRAYSIZE(lbyType));
+
+    ImGui::Columns(2, nullptr, false);
+    {
+
     ImGui::Text(XORSTR("LBY Mode"));
 
+    }
+    ImGui::NextColumn();
+    {
+
+    ImGui::Combo(XORSTR("##LbyType"), (int*)&Settings::AntiAim::RageAntiAim::lbym, lbyType, IM_ARRAYSIZE(lbyType));
+
+    }
     /*
     ** Starting of Manual anti aim
     */
@@ -272,6 +282,7 @@ if (Settings::AntiAim::SlowWalk::enabled){
 	if (Settings::Resolver::manual){
             ImGui::Checkbox(XORSTR("Force Bruteforce"), &Settings::Resolver::forcebrute);
 	    if (!Settings::Resolver::forcebrute){
+            ImGui::SliderFloat(XORSTR("##GOALPITCH"), &Settings::Resolver::Pitch, -89, 89, XORSTR("Amount: %0.f"));
             ImGui::SliderFloat(XORSTR("##GOALFEETYAW"), &Settings::Resolver::goalFeetYaw, 0, 180, XORSTR("Amount: %0.f"));
             ImGui::SliderFloat(XORSTR("##EYEANGLES"), &Settings::Resolver::EyeAngles, -60, 60, XORSTR("Amount: %0.f"));
 						}

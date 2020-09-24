@@ -48,6 +48,7 @@ enum class TracerType : int
 {
 	BOTTOM,
 	CURSOR,
+	ARROWS,
 };
 
 enum class ClanTagType : int
@@ -117,6 +118,7 @@ enum class ChamsType : int
 	ADDITIVETWO,
 	WIREFRAME,
 	FLAT,
+	PEARL,
 	GLOW,
 	NONE,
 };
@@ -828,7 +830,7 @@ namespace Settings
 		{
 	inline float Speed;
 	inline bool enabled;
-	inline ButtonCode_t key = ButtonCode_t::KEY_LSHIFT;
+	inline ButtonCode_t key;
 
 		}
 	namespace Type
@@ -890,7 +892,7 @@ namespace Settings
 		namespace FakeDuck
 		{
 			inline bool enabled = false;
-			inline ButtonCode_t fakeDuckKey = ButtonCode_t::KEY_LCONTROL;
+			inline ButtonCode_t fakeDuckKey;
 		}
   namespace randomLag
                 {
@@ -901,6 +903,7 @@ namespace Settings
 
 	namespace Resolver
 	{
+		inline float Pitch;
 		inline float resolveDelt = 0.5f;
 		inline bool resolveAll = false;
 		inline float goalFeetYaw;
@@ -1419,6 +1422,12 @@ namespace Settings
 			inline int Min = 3;
 		}
 	}
+namespace FakeWalk
+{
+inline bool enabled;
+inline int speed;
+inline ButtonCode_t key;
+}
 
 	namespace NoDuckCooldown
 	{
@@ -1692,6 +1701,54 @@ namespace Settings
 		inline bool enabled = false;
 	}
 
+namespace SvCheats
+{
+inline bool enabled;
+
+namespace gravity {
+inline bool enabled;
+inline int amount;
+}
+
+namespace aspect
+{
+inline bool enabled;
+inline float var;
+}
+
+namespace bright
+{
+inline bool enabled;
+}
+
+namespace fog
+{
+inline bool enabled;
+}
+
+namespace impacts
+{
+inline bool enabled;
+}
+
+
+namespace viewmodel
+{
+inline bool enabled;
+inline float fov;
+inline float x;
+inline float y;
+inline float z;
+}
+
+namespace grenadetraj
+{
+inline bool enabled;
+}
+
+}
+
+
 	namespace DisablePostProcessing
 	{
 		inline bool enabled = false;
@@ -1744,7 +1801,7 @@ namespace Settings
 
 	namespace QuickSwitch
 	{
-		extern bool enabled;
+		inline bool enabled;
 	}
 
 	namespace AngleIndicator

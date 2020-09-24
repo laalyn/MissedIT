@@ -12,7 +12,9 @@
 IMaterial *materialChamsFlat, *materialChamsFlatIgnorez;
 IMaterial *WhiteAdditive,*WhiteAdditiveIgnoreZ;
 IMaterial *AdditiveTwo, *AdditiveTwoIgnoreZ;
-IMaterial* materialChamsGlowIgnorez;
+IMaterial* materialChamsPearl;
+IMaterial* materialChamsGlow;
+
 typedef void (*DrawModelExecuteFn) (void*, void*, void*, const ModelRenderInfo_t&, matrix3x4_t*);
 
 static void DrawPlayer(void* thisptr, void* context, void *state, const ModelRenderInfo_t &pInfo, matrix3x4_t* pCustomBoneToWorld)
@@ -44,7 +46,8 @@ static void DrawPlayer(void* thisptr, void* context, void *state, const ModelRen
 
 	IMaterial *visible_material = nullptr;
 	IMaterial *hidden_material = nullptr;
-	
+	IMaterial *overlay_material = nullptr;
+
 
 	switch (chamsType)
 	{
@@ -62,9 +65,13 @@ static void DrawPlayer(void* thisptr, void* context, void *state, const ModelRen
 			visible_material = AdditiveTwo;
 			hidden_material = AdditiveTwoIgnoreZ;
 			break;
+		case ChamsType::PEARL:
+        		visible_material = materialChamsPearl;
+       	 		hidden_material = materialChamsPearl;
 		case ChamsType::GLOW:
-                        visible_material = materialChamsFlat;
-			hidden_material = materialChamsGlowIgnorez;
+			visible_material = materialChamsFlat;
+                        hidden_material = materialChamsFlatIgnorez;
+			overlay_material = materialChamsGlow;
 			break;
 		default :
 			return;
@@ -127,7 +134,11 @@ static void DrawPlayer(void* thisptr, void* context, void *state, const ModelRen
 	}
 
 	modelRender->ForcedMaterialOverride(visible_material);
-	
+		if (chamsType == ChamsType::GLOW){
+                modelRenderVMT->GetOriginalMethod<DrawModelExecuteFn>(21)(thisptr, context, state, pInfo, pCustomBoneToWorld);
+
+	        modelRender->ForcedMaterialOverride(overlay_material);
+}
 }
 
 static void DrawFake(void* thisptr, void* context, void *state, const ModelRenderInfo_t &pInfo, matrix3x4_t* pCustomBoneToWorld)
@@ -149,6 +160,7 @@ static void DrawFake(void* thisptr, void* context, void *state, const ModelRende
 		return;
 
 	IMaterial* Fake_meterial = nullptr;
+        IMaterial *faoverlay_material = nullptr;
 
 	switch (Settings::ESP::FilterLocalPlayer::Chams::type)
 	{
@@ -163,8 +175,13 @@ static void DrawFake(void* thisptr, void* context, void *state, const ModelRende
 		case ChamsType::ADDITIVETWO:
 			Fake_meterial = AdditiveTwo;
 			break;
-                case ChamsType::GLOW:
-                        Fake_meterial = materialChamsGlowIgnorez;
+                case ChamsType::PEARL:
+                        Fake_meterial = materialChamsPearl;
+	      		break;
+		case ChamsType::GLOW:
+                        Fake_meterial = materialChamsFlat;
+                        faoverlay_material = materialChamsGlow;
+			break;
 		default:
 			return;
 	}
@@ -205,23 +222,14 @@ static void DrawFake(void* thisptr, void* context, void *state, const ModelRende
 		Fake_meterial->AlphaModulate(0.5f);
 	}
 	//entity->SetupBones
-if (Settings::ESP::Chams::type == ChamsType::GLOW) {			
-			bool isFoundVis;
-			bool isFoundHidden;
-			//IMaterialVar* pVarVis = materialChamsGlowIgnorez->FindVar("$envmaptint", &isFoundVis, false);
-//			IMaterialVar* pVarHidden = hidden_material->FindVar("$envmaptint", &isFoundHidden, false);
-	    	ImVec4 viscolor = Settings::ESP::Chams::localplayerColor.Color(entity).Value;
-            	//pVarVis->SetVecValue(viscolor.x, viscolor.y, viscolor.z);
-			Fake_meterial->SetMaterialVarFlag(MATERIAL_VAR_ADDITIVE, false);
-	   		Fake_meterial->SetMaterialVarFlag(MATERIAL_VAR_VERTEXCOLOR, false);
-       		Fake_meterial->SetMaterialVarFlag(MATERIAL_VAR_VERTEXALPHA, false);
-       		Fake_meterial->SetMaterialVarFlag(MATERIAL_VAR_NOFOG, false);
-			Fake_meterial->AlphaModulate(Settings::ESP::Chams::localplayerColor.Color(entity).Value.w);
-
-		}
 	modelRender->ForcedMaterialOverride(Fake_meterial);
 	modelRenderVMT->GetOriginalMethod<DrawModelExecuteFn>(21)(thisptr, context, state, pInfo, fakeBoneMatrix);
-	modelRender->ForcedMaterialOverride(nullptr);
+                if (Settings::ESP::FilterLocalPlayer::Chams::type == ChamsType::GLOW){
+                modelRender->ForcedMaterialOverride(faoverlay_material);
+}else {
+                modelRender->ForcedMaterialOverride(nullptr);
+}
+
 	// End of chams for fake angle
 }
 
@@ -322,6 +330,9 @@ static void DrawArms(const ModelRenderInfo_t& pInfo)
 		case ChamsType::ADDITIVETWO:
 			mat = AdditiveTwo;
 			break;
+                case ChamsType::PEARL:
+                        mat = materialChamsPearl;
+
 		default :
 			return;
 	}
@@ -352,10 +363,11 @@ void Chams::DrawModelExecute(void* thisptr, void* context, void *state, const Mo
 	static bool materialsCreated = false;
 	if (!materialsCreated)
 	{
-	
+	        materialChamsPearl = Util::CreateMaterial2(XORSTR("VertexLitGeneric"), XORSTR("models/inventory_items/dogtags/dogtags_outline"), false, true, true, true, 1.f);
+                materialChamsGlow = Util::CreateMaterial3(XORSTR("VertexLitGeneric"), XORSTR("csgo/materials/glowOverlay.vmt"), false, true, true, true, 1.f);
+
 		materialChamsFlat = Util::CreateMaterial(XORSTR("UnlitGeneric"), XORSTR("VGUI/white_additive"), false, true, true, true, true);
 		materialChamsFlatIgnorez = Util::CreateMaterial(XORSTR("UnlitGeneric"), XORSTR("VGUI/white_additive"), true, true, true, true, true);
-		materialChamsGlowIgnorez = Util::CreateMaterial(XORSTR("VertexLitGeneric"), XORSTR("models/gibs/glass/glass"), true, false, true, true, true);	
 	
 		WhiteAdditive = Util::CreateMaterial(XORSTR("VertexLitGeneric"), XORSTR("VGUI/white_additive"), false, false, true, true, true);
 		WhiteAdditiveIgnoreZ = Util::CreateMaterial(XORSTR("VertexLitGeneric"), XORSTR("VGUI/white_additive"), true, false, true, true, true);

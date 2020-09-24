@@ -289,6 +289,28 @@ void Settings::LoadDefaultsOrSave(std::string path)
     settings[XORSTR("AntiAim")][XORSTR("Rage AntiAim")][XORSTR("pitchJitter")] = Settings::AntiAim::RageAntiAim::pitchJitter;
     settings[XORSTR("AntiAim")][XORSTR("LBYJitter")] = Settings::AntiAim::lbyjitter;
 
+    settings[XORSTR("SvCheats")][XORSTR("enabled")] = Settings::SvCheats::enabled;
+
+    settings[XORSTR("gravity")][XORSTR("enabled")] = Settings::SvCheats::gravity::enabled;
+    settings[XORSTR("impacts")][XORSTR("enabled")] = Settings::SvCheats::impacts::enabled;
+    settings[XORSTR("grenadetraj")][XORSTR("enabled")] = Settings::SvCheats::grenadetraj::enabled;
+    settings[XORSTR("viewmodel")][XORSTR("enabled")] = Settings::SvCheats::viewmodel::enabled;
+    settings[XORSTR("viewmodelfov")][XORSTR("fov")] = Settings::SvCheats::viewmodel::fov;
+
+    settings[XORSTR("aspect")][XORSTR("enabled")] = Settings::SvCheats::aspect::enabled;
+    settings[XORSTR("aspect")][XORSTR("var")] = Settings::SvCheats::aspect::var;
+
+    settings[XORSTR("gravity")][XORSTR("enabled")] = Settings::SvCheats::gravity::enabled;
+    settings[XORSTR("gravity")][XORSTR("amount")] = Settings::SvCheats::gravity::amount;
+
+
+    settings[XORSTR("bright")][XORSTR("enabled")] = Settings::SvCheats::bright::enabled;
+    settings[XORSTR("fog")][XORSTR("enabled")] = Settings::SvCheats::fog::enabled;
+
+    settings[XORSTR("viewmodelx")][XORSTR("x")] = Settings::SvCheats::viewmodel::x;
+    settings[XORSTR("viewmodely")][XORSTR("y")] = Settings::SvCheats::viewmodel::y;
+    settings[XORSTR("viewmodelz")][XORSTR("z")] = Settings::SvCheats::viewmodel::z;
+
     settings[XORSTR("BuyBot")][XORSTR("enabled")] = Settings::buybot::enabled;
     settings[XORSTR("BuyBot")][XORSTR("scout")] = Settings::buybot::scout;
     settings[XORSTR("BuyBot")][XORSTR("autosniper")] = Settings::buybot::autosniper;
@@ -680,6 +702,7 @@ void Settings::LoadDefaultsOrSave(std::string path)
 
     settings[XORSTR("View")][XORSTR("NoViewPunch")][XORSTR("enabled")] = Settings::View::NoViewPunch::enabled;
     settings[XORSTR("View")][XORSTR("NoAimPunch")][XORSTR("enabled")] = Settings::View::NoAimPunch::enabled;
+    settings[XORSTR("FakeWalk")][XORSTR("enabled")] = Settings::FakeWalk::enabled;
 
     settings[XORSTR("FakeLag")][XORSTR("enabled")] = Settings::FakeLag::enabled;
     settings[XORSTR("FakeLag")][XORSTR("value")] = Settings::FakeLag::value;
@@ -960,6 +983,27 @@ void Settings::LoadConfig(std::string path)
     GetVal(settings[XORSTR("AntiAim")][XORSTR("Rage AntiAim")][XORSTR("pitchJitter")], &Settings::AntiAim::RageAntiAim::pitchJitter);
     GetVal(settings[XORSTR("AntiAim")][XORSTR("LBYJitter")], &Settings::AntiAim::lbyjitter);
 
+    GetVal(settings[XORSTR("SvCheats")][XORSTR("enabled")], &Settings::SvCheats::enabled);
+
+    GetVal(settings[XORSTR("aspect")][XORSTR("enabled")], &Settings::SvCheats::aspect::enabled);
+    GetVal(settings[XORSTR("aspect")][XORSTR("var")], &Settings::SvCheats::aspect::var);
+
+    GetVal(settings[XORSTR("bright")][XORSTR("enabled")], &Settings::SvCheats::bright::enabled);
+    GetVal(settings[XORSTR("fog")][XORSTR("enabled")], &Settings::SvCheats::fog::enabled);
+    GetVal(settings[XORSTR("impacts")][XORSTR("enabled")], &Settings::SvCheats::impacts::enabled);
+    GetVal(settings[XORSTR("grenadetraj")][XORSTR("enabled")], &Settings::SvCheats::grenadetraj::enabled);
+
+
+    GetVal(settings[XORSTR("gravity")][XORSTR("enabled")], &Settings::SvCheats::gravity::enabled);
+
+    GetVal(settings[XORSTR("viewmodel")][XORSTR("enabled")], &Settings::SvCheats::viewmodel::enabled);
+    GetVal(settings[XORSTR("viewmodelfov")][XORSTR("fov")], &Settings::SvCheats::viewmodel::fov);
+
+    GetVal(settings[XORSTR("gravity")][XORSTR("amount")], &Settings::SvCheats::gravity::amount);
+
+    GetVal(settings[XORSTR("viewmodelx")][XORSTR("x")], &Settings::SvCheats::viewmodel::x);
+    GetVal(settings[XORSTR("viewmodely")][XORSTR("y")], &Settings::SvCheats::viewmodel::y);
+    GetVal(settings[XORSTR("viewmodelz")][XORSTR("z")], &Settings::SvCheats::viewmodel::z);
 
     GetVal(settings[XORSTR("BuyBot")][XORSTR("enabled")], &Settings::buybot::enabled);
     GetVal(settings[XORSTR("BuyBot")][XORSTR("scout")], &Settings::buybot::scout);
@@ -1403,6 +1447,7 @@ void Settings::LoadConfig(std::string path)
 
     GetVal(settings[XORSTR("View")][XORSTR("NoViewPunch")][XORSTR("enabled")], &Settings::View::NoViewPunch::enabled);
     GetVal(settings[XORSTR("View")][XORSTR("NoAimPunch")][XORSTR("enabled")], &Settings::View::NoAimPunch::enabled);
+    GetVal(settings[XORSTR("FakeWalk")][XORSTR("enabled")], &Settings::FakeWalk::enabled);
 
     GetVal(settings[XORSTR("FakeLag")][XORSTR("enabled")], &Settings::FakeLag::enabled);
     GetVal(settings[XORSTR("FakeLag")][XORSTR("value")], &Settings::FakeLag::value);

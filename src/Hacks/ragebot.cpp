@@ -17,6 +17,9 @@ std::vector<int64_t> Ragebot::friends = {};
 std::vector<long> RagebotkillTimes = { 0 }; // the Epoch time from when we kill someone
 inline bool	doubleFire = false;
 static QAngle RCSLastPunch = QAngle(0);
+float x;
+float y;
+float z;
 static void BestMultiPointHEADDamage(C_BasePlayer* player, int &BoneIndex, int& Damage, Vector& Spot)
 {
 	if (!player || !player->GetAlive())
@@ -872,17 +875,66 @@ void Ragebot::CreateMove(CUserCmd* cmd)
 	
 	// Cheking if our aimbot miss any shot or not basically it is not the perfect way to do this
 	// But for Now I only come up with this thing :(
-	if (Ragebot::miss.shooted && lockedEnemy.player)
-	{
-		if (Ragebot::miss.playerhelth == lockedEnemy.player->GetHealth() && lockedEnemy.player->GetAlive())
-			Resolver::players[Resolver::TargetID].MissedCount++;
-		
-		if (Resolver::players[Resolver::TargetID].MissedCount > 4)
-			Resolver::players[Resolver::TargetID].MissedCount = 0;
-		
-		Ragebot::miss.shooted = false;
-		Ragebot::miss.playerhelth = 0;
+
+
+//Heres my ghetto attempt at this.
+        if (Ragebot::miss.shooted && lockedEnemy.player && activeWeapon->GetNextPrimaryAttack() <= static_cast<float>(localplayer->GetTickBase()) * TICK_INTERVAL && localplayer->GetAlive() && !(activeWeapon->GetInReload()))
+        {
+      Vector traceStart, traceEnd;
+
+        traceStart = Ragebot::localEye;
+        traceEnd.x = Ragebot::lockedEnemy.lockedSpot.x;
+        traceEnd.y = Ragebot::lockedEnemy.lockedSpot.y;
+        traceEnd.z = Ragebot::lockedEnemy.lockedSpot.z;
+    Ray_t ray;
+    trace_t tr;
+
+    ray.Init(traceStart, traceEnd);
+ CTraceFilter traceFilter;
+                traceFilter.pSkip = localplayer;
+
+    trace->TraceRay(ray, MASK_SHOT, &traceFilter, &tr);
+
+
+                if (Ragebot::miss.playerhelth == lockedEnemy.player->GetHealth() && lockedEnemy.player->GetAlive()){
+    if (tr.m_pEntityHit == lockedEnemy.player){
+
+                        Resolver::players[Resolver::TargetID].MissedCount++;
+                                         cvar->ConsoleDPrintf("[eyehook] Missed shot due to bad resolve [RESOLVER: ");
+    switch (Settings::Resolver::resolverType)
+        {
+        case resolverType::Experimental:
+	if (!Settings::Resolver::manual){
+	cvar->ConsoleDPrintf("EXP, STEP "); 
+	cvar->ConsoleDPrintf(std::to_string(Resolver::players[Resolver::TargetID].MissedCount).c_str()); 
 	}
+	else if (!Settings::Resolver::forcebrute) {
+	        cvar->ConsoleDPrintf("MANUAL, Y: ");
+		cvar->ConsoleDPrintf(std::to_string(Settings::Resolver::EyeAngles).c_str());
+                cvar->ConsoleDPrintf(" , X: ");
+                cvar->ConsoleDPrintf(std::to_string(Settings::Resolver::Pitch).c_str());
+	}else if (Settings::Resolver::forcebrute && Settings::Resolver::manual){
+     cvar->ConsoleDPrintf("BRUTEFORCE");}
+	break;        
+	case resolverType::ApuWare:
+	                cvar->ConsoleDPrintf("ApuWare");
+
+	break;
+
+	}
+cvar->ConsoleDPrintf("]\n");
+}
+else{
+cvar->ConsoleDPrintf("[eyehook] Missed shot due to spread\n");
+}     
+                   }
+
+                if (Resolver::players[Resolver::TargetID].MissedCount > 4)
+                        Resolver::players[Resolver::TargetID].MissedCount = 0;
+
+                Ragebot::miss.shooted = false;
+                Ragebot::miss.playerhelth = 0;
+        }
 
 	QAngle oldAngle;
     	engine->GetViewAngles(oldAngle);
@@ -938,6 +990,7 @@ void Ragebot::CreateMove(CUserCmd* cmd)
 		if (cmd->buttons & IN_ATTACK)
 		{
 			angle = Math::CalcAngle(Ragebot::localEye, Ragebot::BestSpot);
+			Ragebot::miss.spot = Ragebot::BestSpot;
 			CreateMove::sendPacket = true;
 			Ragebot::miss.shooted = true;
 			Ragebot::miss.playerhelth = lockedEnemy.player->GetHealth();
@@ -973,6 +1026,7 @@ Ragebot::drawStartPos();
 void Ragebot::FireGameEvent(IGameEvent* event)
 {
 	if(!event)	return;
+C_BasePlayer* localplayer = (C_BasePlayer*)entityList->GetClientEntity(engine->GetLocalPlayer());
 
     if (strcmp(event->GetName(), XORSTR("player_connect_full")) == 0 || strcmp(event->GetName(), XORSTR("cs_game_disconnected")) == 0)
     {
@@ -980,6 +1034,22 @@ void Ragebot::FireGameEvent(IGameEvent* event)
 	    	return;
 		Ragebot::friends.clear();
     }
+if ((strcmp(event->GetName(), XORSTR("bullet_impact")))){
+   if (event->GetInt(XORSTR("userid"))){
+
+
+//cvar->ConsoleDPrintf("[eyehook] impac\n");
+
+if (Ragebot::miss.shooted){
+       x = event->GetFloat (XORSTR("x"));
+                 y = event->GetFloat(XORSTR("y"));
+                 z = event->GetFloat(XORSTR("z"));
+
+
+}
+}
+
+}
     if (strcmp(event->GetName(), XORSTR("player_death")) == 0)
     {
 		int attacker_id = engine->GetPlayerForUserID(event->GetInt(XORSTR("attacker")));

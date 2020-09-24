@@ -30,6 +30,7 @@ namespace Ragebot {
     {
         bool shooted = false;
         int playerhelth = 0;
+	Vector spot;
     };
 
     inline enemy lockedEnemy;

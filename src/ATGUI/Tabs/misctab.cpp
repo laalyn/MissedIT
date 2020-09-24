@@ -326,6 +326,18 @@ void Misc::RenderTab()
 			}
 			ImGui::Columns(1);
 			ImGui::Separator();
+              ImGui::Checkbox(XORSTR("Force SvCheats"), &Settings::SvCheats::enabled);
+                if(Settings::SvCheats::enabled) {
+                    ImGui::Checkbox(XORSTR("Ragdoll Override"), &Settings::SvCheats::gravity::enabled);
+                    ImGui::Checkbox(XORSTR("Show Impacts"), &Settings::SvCheats::impacts::enabled);
+                    ImGui::Checkbox(XORSTR("Viewmodel OVerride"), &Settings::SvCheats::viewmodel::enabled);
+                    ImGui::Checkbox(XORSTR("Aspect OVerride"), &Settings::SvCheats::aspect::enabled);
+                    ImGui::Checkbox(XORSTR("Fullbright"), &Settings::SvCheats::bright::enabled);
+                    ImGui::Checkbox(XORSTR("Fog Override"), &Settings::SvCheats::fog::enabled);
+	            ImGui::Checkbox(XORSTR("Show grenade trajectory"), &Settings::SvCheats::grenadetraj::enabled);
+                }
+
+                        ImGui::Separator();
                                         ImGui::Checkbox(XORSTR("BuyBot"), &Settings::buybot::enabled);
 					if ( Settings::buybot::enabled){
                                         ImGui::Checkbox(XORSTR("AutoSniper"), &Settings::buybot::autosniper);
@@ -457,6 +469,7 @@ NameChanger::changeName(false, res.c_str(), 5.0f);
 				ImGui::Checkbox(XORSTR("Disable post-processing"), &Settings::DisablePostProcessing::enabled);
 				ImGui::Checkbox(XORSTR("No Duck Cooldown"), &Settings::NoDuckCooldown::enabled);
                                 ImGui::Checkbox(XORSTR("Silent Walk"), &Settings::SilentWalk::enabled);
+		                ImGui::Checkbox(XORSTR("Fake Walk"), &Settings::FakeWalk::enabled);
 
 			}
 			ImGui::NextColumn();
@@ -473,6 +486,8 @@ NameChanger::changeName(false, res.c_str(), 5.0f);
 				ImGui::Checkbox(XORSTR("Show Spectator list"), &Settings::ShowSpectators::enabled);
 				ImGui::Checkbox(XORSTR("Show Player list"), &PlayerList::showWindow);
 			        ImGui::Checkbox(XORSTR("AWP Quick Switch"), &Settings::QuickSwitch::enabled);
+		                UI::KeyBindButton(&Settings::FakeWalk::key);
+
 			}
 			ImGui::Columns(1);
 			ImGui::Separator();

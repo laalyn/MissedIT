@@ -57,7 +57,7 @@ void Main::RenderWindow()
 			"Skins",
 			"Misc",
 		};
-
+//ImGui::PushFont(ftest);
 		for (int i = 0; i < IM_ARRAYSIZE(tabs); i++)
 		{
 			int distance = i == page ? 0 : i > page ? i - page : page - i;
@@ -68,7 +68,7 @@ void Main::RenderWindow()
 				Settings::UI::mainColor.Color().Value.z - (distance * 0.035f),
 				Settings::UI::mainColor.Color().Value.w);
 
-			if (ImGui::Button(tabs[i], ImVec2(ImGui::GetWindowSize().x / IM_ARRAYSIZE(tabs) - 9, 0)))
+			if (ImGui::Button(tabs[i], ImVec2(ImGui::GetWindowSize().x / IM_ARRAYSIZE(tabs) - 9,50)))
 				page = i;
 
 			ImGui::GetStyle().Colors[ImGuiCol_Button] = Settings::UI::accentColor.Color();
@@ -76,7 +76,7 @@ void Main::RenderWindow()
 			if (i < IM_ARRAYSIZE(tabs) - 1)
 				ImGui::SameLine();
 		}
-
+//ImGui::PopFont();
 		ImGui::Separator();
 
 		switch (page)

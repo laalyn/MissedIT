@@ -398,12 +398,12 @@ if (Settings::AntiAim::RageAntiAim::lbym == LbyMode::Normal){
     // LBYBreak(AntiAim::realAngle.y, angle, localplayer);
    else if (Settings::AntiAim::RageAntiAim::lbym == LbyMode::Opposite){
 if (AntiAim::LbyUpdate()){
-            AntiAim::fakeAngle.y = angle.y += inverted ? -120 : 120;
+            AntiAim::realAngle.y = angle.y += inverted ? -120 : 120;
 }
 
 if (!AntiAim::bSend)
         {
-            AntiAim::realAngle.y = angle.y += inverted ? 120 : -120;
+            AntiAim::fakeAngle.y = angle.y += inverted ? 120 : -120;
 
 }
 
@@ -469,12 +469,12 @@ AntiAim::realAngle.y = angle.y += Settings::AntiAim::RageAntiAim::offset;
 }
 if (Settings::AntiAim::RageAntiAim::lbym == LbyMode::Opposite){
 if (AntiAim::LbyUpdate()){
-            AntiAim::fakeAngle.y = angle.y += Settings::AntiAim::RageAntiAim::offset + -60;
+            AntiAim::realAngle.y = angle.y += Settings::AntiAim::RageAntiAim::offset + -120;
 }
 
 if (!AntiAim::bSend)
         {
-            AntiAim::realAngle.y = angle.y += Settings::AntiAim::RageAntiAim::offset + 60;
+            AntiAim::fakeAngle.y = angle.y += Settings::AntiAim::RageAntiAim::offset + 120;
 
 }
 
@@ -898,13 +898,13 @@ if (!CreateMove::sendPacket)
     static auto Experimental([&](){
 //OT CALLS THIS OPPOSITE LBY MODE FOR RAGE AND EXTEND DESYNC ON LEGIT (while also doing some weird shit).
 if (AntiAim::LbyUpdate()){
-            AntiAim::fakeAngle.y = angle.y += inverted ? -60 : 60;
+            AntiAim::realAngle.y = angle.y += inverted ? -60 : 60;
 //AntiAim::bSend = false;
 }
 
 if (!AntiAim::bSend)
         {
-            AntiAim::realAngle.y = angle.y += inverted ? 60 : -60;
+            AntiAim::fakeAngle.y = angle.y += inverted ? 60 : -60;
 
 }
 if (AntiAim::bSend){
@@ -1007,7 +1007,12 @@ static bool canMove(C_BasePlayer* localplayer, C_BaseCombatWeapon* activeweapon,
         if (postponTime < globalVars->curtime )
             return true;
     }
-    if (cmd->buttons & IN_ATTACK && Ragebot::r8p == false)
+
+if ( (*csGameRules)->IsFreezeTime())
+return false;
+   if ( localplayer->GetFlags() & FL_FROZEN )
+	return false;
+   if (cmd->buttons & IN_ATTACK && Ragebot::r8p == false)
         return false;
     if ( cmd->buttons & IN_USE )
         return false;

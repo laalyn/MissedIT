@@ -6,7 +6,7 @@
 	const char* BackendTypes[] = { "Surface (Valve)", "ImGUI (Custom/Faster)" };
 	const char* BoxTypes[] = { "Flat 2D", "Frame 2D", "Box 3D", "Hitboxes" };
 	const char* SpriteTypes[] = { "Tux" };
-	const char* TracerTypes[] = { "Bottom", "Cursor" };
+	const char* TracerTypes[] = { "Bottom", "Cursor", "Arrows" };
 	const char* BarTypes[] = { "Vertical Left", "Vertical Right", "Horizontal Below", "Horizontal Above", "Battery" };
 	const char* BarColorTypes[] = { "Static", "Health Based" };
 	const char* TeamColorTypes[] = { "Absolute", "Relative" };
@@ -16,6 +16,7 @@
 								"ADDTIVE TWO",
 								"WIREFRAME",
 								"FLAT",
+								"PEARL",
 								"GLOW",
 								"NONE",
 								};
@@ -315,7 +316,7 @@ void Visuals::RenderTab()
 					ImGui::Selectable(XORSTR("Defusing"), &Settings::ESP::Info::defusing, ImGuiSelectableFlags_DontClosePopups);
 					ImGui::Selectable(XORSTR("Rescuing Hostage"), &Settings::ESP::Info::rescuing, ImGuiSelectableFlags_DontClosePopups);
                 	ImGui::Selectable(XORSTR("Layers Debug"), &Settings::Debug::AnimLayers::draw, ImGuiSelectableFlags_DontClosePopups);
-					ImGui::Selectable(XORSTR("Money"), &Settings::ESP::Info::money, ImGuiSelectableFlags_DontClosePopups);
+					ImGui::Selectable(XORSTR("Choked Packets"), &Settings::ESP::Info::money, ImGuiSelectableFlags_DontClosePopups);
 				
 				}
 				

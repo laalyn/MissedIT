@@ -30,7 +30,6 @@
 VMatrix vMatrix;
 
 Vector2D barsSpacing = Vector2D( 0, 0 );
-
 struct Footstep {
     Footstep( Vector &pos, long expireAt ){
         position = pos;
@@ -558,11 +557,48 @@ static void DrawSkeleton( C_BasePlayer* player, C_BasePlayer* localplayer ) {
 	
 	}
 }
+void draw_arrow(float angle, Color color)
+{
+        Vector2D pos[8] =
+        {
+                { -7.f, -50.f },
+                { -7.f, -140.f },
+
+                { 7.f, -50.f },
+                { 7.f, -140.f },
+
+                { -20.f, -130.f },
+                { 0.f, -160.f },
+
+                { 20.f, -130.f },
+                { 0.f, -160.f }
+        };
+        Vector2D center;
+        center.x = Paint::engineWidth / 2;
+        center.y = Paint::engineHeight / 2;
+
+        for (auto& p : pos)
+        {
+                const auto s = sin(angle);
+                const auto c = cos(angle);
+
+                p = Vector2D(p.x * c - p.y * s, p.x * s + p.y * c) + center;
+        }
+
+        //Draw::Line(pos[0], pos[1], color);
+        //Draw::Line(pos[2], pos[3], color);
+        Draw::Line(pos[4], pos[5], color);
+        Draw::Line(pos[6], pos[7], color);
+}
 
 static void DrawTracer( C_BasePlayer* player, TracerType& tracerType ) {
 	Vector src3D;
 	Vector src;
 	src3D = player->GetVecOrigin() - Vector( 0, 0, 0 );
+        bool bIsVisible = Entity::IsVisible( player, CONST_BONE_HEAD, 360.f, Settings::ESP::Filters::smokeCheck );
+    C_BasePlayer* localplayer = (C_BasePlayer*) entityList->GetClientEntity(engine->GetLocalPlayer());
+
+if ( tracerType != TracerType::ARROWS){
 
 	if ( debugOverlay->ScreenPosition( src3D, src ) )
 		return;
@@ -575,9 +611,15 @@ static void DrawTracer( C_BasePlayer* player, TracerType& tracerType ) {
 	else if ( tracerType == TracerType::BOTTOM )
 		y = Paint::engineHeight;
 
-	bool bIsVisible = Entity::IsVisible( player, CONST_BONE_HEAD, 180.f, Settings::ESP::Filters::smokeCheck );
 	Draw::AddLine( ( int ) ( src.x ), ( int ) ( src.y ), x, y, ESP::GetESPPlayerColor( player, bIsVisible ) );
+}else{
+QAngle viewAngles;
+		engine->GetViewAngles(viewAngles);
+    const auto rot = DEG2RAD(viewAngles.y - Math::CalcAngle(localplayer->GetEyePosition(), player->GetEyePosition()).y);
+draw_arrow(rot, Color::FromImColor(ESP::GetESPPlayerColor( player, bIsVisible )));
 }
+}
+
 
 static void DrawAimbotSpot( ) {
 	C_BasePlayer* localplayer = ( C_BasePlayer* ) entityList->GetClientEntity( engine->GetLocalPlayer() );
@@ -861,6 +903,9 @@ ImColor DColor;
 //}
 
 //Draw::AddText( x, y + 70, "DT", DColor );
+        float vel2D = localplayer->GetVelocity().Length2D();
+std::string veltext = std::to_string(vel2D);
+Draw::AddText( x, y + 70, veltext.c_str(), AColor );
 
 }
 static void DrawSounds( C_BasePlayer *player, ImColor playerColor ) {
@@ -1179,9 +1224,19 @@ modelName = Weaponsi.find(activeeWeapon)->second;
 
 	if (Settings::ESP::Info::money)
 	{
-		char money[8];
-        snprintf(money, 6, "$%d", player->GetMoney());
-		stringsToShow.push_back(money);
+int wap;
+int previous_ticks[128];
+auto ticks = TIME_TO_TICKS(player->GetSimulationTime() - player->GetOldSimulationTime());
+if (ticks == 0 && previous_ticks[player->GetIndex()] > 0) {
+wap = previous_ticks[player->GetIndex()] - 1;
+}
+else {
+previous_ticks[player->GetIndex()] = ticks;
+wap = ticks;
+}
+
+if (wap > 2)
+		stringsToShow.push_back("Cheating?, CP:" + std::to_string(wap) );
 	}
 	if ( Settings::ESP::Info::scoped && player->IsScoped() )
 		stringsToShow.push_back( XORSTR( "B" ) );
@@ -1248,7 +1303,7 @@ static void DrawPlayer(C_BasePlayer* player)
 	bool bIsVisible = false;
 	if (Settings::ESP::Filters::visibilityCheck || Settings::ESP::Filters::legit)
 	{
-		bIsVisible = Entity::IsVisible(player, CONST_BONE_HEAD, 180.f, Settings::ESP::Filters::smokeCheck);
+		bIsVisible = Entity::IsVisible(player, CONST_BONE_HEAD, 360.f, Settings::ESP::Filters::smokeCheck);
 		if (!bIsVisible && Settings::ESP::Filters::legit)
 			return;
 	}
@@ -2010,8 +2065,8 @@ void ESP::Paint()
 
 		DrawWatermark(localplayer);
 	if(Settings::ESP::showimpacts){
-	ConVar* cvar_name = cvar->FindVar(XORSTR("sv_showimpacts"));
-	cvar_name->SetValue(1);
+	//ConVar* cvar_name = cvar->FindVar(XORSTR("sv_showimpacts"));
+	//cvar_name->SetValue(1);
 	}
 if (Settings::ThirdPerson::toggled)
 {
@@ -2045,7 +2100,6 @@ void ESP::DrawModelExecute()
 void ESP::CreateMove(CUserCmd* cmd)
 {
 	viewanglesBackup = cmd->viewangles;
-
     if( Settings::ESP::enabled && Settings::ESP::Sounds::enabled && (Settings::ESP::Filters::allies || Settings::ESP::Filters::enemies || Settings::ESP::Filters::localplayer) ){
         CheckActiveSounds();
     }
