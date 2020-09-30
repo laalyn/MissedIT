@@ -22,6 +22,12 @@ static void RageAntiAIm()
         "Brainfuck Fake Fake AA",
 	"JitterRandom",
     };
+const char* pitchType[] = {
+        "Up",
+        "Down",
+	"Zero",
+	"Fake Zero",
+};
 
 const char* lbyType[] = {
 	"Normal",
@@ -44,11 +50,15 @@ const char* lbyType[] = {
         {
             ImGui::ItemSize(ImVec2(0.0f, 0.0f), 0.0f);
             ImGui::Text(XORSTR("Yaw"));
+            ImGui::Text(XORSTR("Pitch"));
+
         }
         ImGui::NextColumn();
         {
             ImGui::PushItemWidth(-1);
             ImGui::Combo(XORSTR("##YACTUALTYPE"), (int*)& Settings::AntiAim::Yaw::typeReal, yType, IM_ARRAYSIZE(yType));
+            ImGui::Combo(XORSTR("##PITCHTYPE"), (int*)& Settings::AntiAim::pitchtype, pitchType, IM_ARRAYSIZE(pitchType));
+
             ImGui::PopItemWidth();
         }
    ImGui::Columns(1);
@@ -66,11 +76,15 @@ const char* lbyType[] = {
         {
             ImGui::ItemSize(ImVec2(0.0f, 0.0f), 0.0f);
             ImGui::Text(XORSTR("Yaw"));
+            ImGui::Text(XORSTR("Pitch"));
+
         }
         ImGui::NextColumn();
         {
             ImGui::PushItemWidth(-1);
             ImGui::Combo(XORSTR("##YACTUALTYPE"), (int*)& Settings::AntiAim::Yaw::typeReal, yType, IM_ARRAYSIZE(yType));
+            ImGui::Combo(XORSTR("##PITCHTYPE"), (int*)& Settings::AntiAim::pitchtype, pitchType, IM_ARRAYSIZE(pitchType));
+
             ImGui::PopItemWidth();
         }
         // Real Percentage
@@ -111,13 +125,13 @@ const char* lbyType[] = {
     ImGui::Columns(2, nullptr, false);
     {
 
-    ImGui::Text(XORSTR("LBY Mode"));
+//    ImGui::Text(XORSTR("LBY Mode"));
 
     }
     ImGui::NextColumn();
     {
 
-    ImGui::Combo(XORSTR("##LbyType"), (int*)&Settings::AntiAim::RageAntiAim::lbym, lbyType, IM_ARRAYSIZE(lbyType));
+//    ImGui::Combo(XORSTR("##LbyType"), (int*)&Settings::AntiAim::RageAntiAim::lbym, lbyType, IM_ARRAYSIZE(lbyType));
 
     }
     /*
@@ -242,9 +256,9 @@ void HvH::RenderTab()
             ImGui::Checkbox(XORSTR("Fake Lag"), &Settings::FakeLag::enabled);
             ImGui::SameLine();
             ImGui::SliderInt(XORSTR("##FAKELAGAMOUNT"), &Settings::FakeLag::value, 0, 100, XORSTR("Amount: %0.f"));
-			ImGui::Checkbox(XORSTR("Adaptive Fake Lag"), &Settings::FakeLag::adaptive);
-ImGui::Checkbox(XORSTR("Random Fake Lag"), &Settings::AntiAim::randomLag::enabled);
-            //UI::KeyBindButton(&Settings::FakeLag::ckey);
+//			ImGui::Checkbox(XORSTR("Adaptive Fake Lag"), &Settings::FakeLag::adaptive);
+//ImGui::Checkbox(XORSTR("Random Fake Lag"), &Settings::AntiAim::randomLag::enabled);
+           //UI::KeyBindButton(&Settings::FakeLag::ckey);
 
                         ImGui::Checkbox(XORSTR("Slow Walk"), &Settings::AntiAim::SlowWalk::enabled);
 if (Settings::AntiAim::SlowWalk::enabled){

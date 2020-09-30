@@ -152,7 +152,13 @@ enum class SpriteType : int
 {
 	SPRITE_TUX,
 };
-
+enum class AntiAimType_X : int
+{
+    STATIC_UP,
+    STATIC_DOWN,
+    FRONT,
+    FRONT_FAKE,
+};
 enum class Sound : int {
 
 	NONE,
@@ -843,7 +849,7 @@ namespace Settings
     namespace AntiAim
     {
 
-
+            inline AntiAimType_X pitchtype = AntiAimType_X::STATIC_DOWN;
 	inline bool lbyjitter;
 	namespace airspin
 		{
@@ -926,6 +932,7 @@ namespace Settings
 
 	namespace Resolver
 	{
+		inline bool rPitch;
 		inline float Pitch;
 		inline float resolveDelt = 0.5f;
 		inline bool resolveAll = false;

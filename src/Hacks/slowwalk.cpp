@@ -21,28 +21,6 @@ void FakeWalk::CreateMove(CUserCmd* cmd)
         return;
 
     C_BaseCombatWeapon* activeWeapon = (C_BaseCombatWeapon*) entityList->GetClientEntityFromHandle(localplayer->GetActiveWeapon());
-//     float amount = 0.0034f * Settings::AntiAim::SlowWalk::Speed; // options.misc.slow_walk_amount has 100 max value
-
-//     Vector velocity = localplayer->GetVelocity();
-//     QAngle direction;
-
-//     //Math::get( ).vector_angles(velocity, direction);
-// Math::AngleVectors(direction, velocity);
-//     float speed = localplayer->GetVelocity().Length2D();
-//     direction.y = cmd->viewangles.y - direction.y;
-
-//     Vector forward;
-
-//     //Math::get().angle_vectors(direction, forward);
-// Math::AngleVectors(direction,forward);
-//     Vector source = forward * -speed;
-
-//     if (speed >= (activeWeapon->GetCSWpnData()->GetMaxPlayerSpeed() * amount))
-//     {
-//         cmd->forwardmove = source.x;
-//         cmd->sidemove = source.y;
-
-//     }
         if (activeWeapon) {
 
 
