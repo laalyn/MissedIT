@@ -234,6 +234,7 @@ enum class AntiAimRealType_Y : int
 	Randome,
 	JitterSwitch,
 	JitterRandom,
+	FakeJitter,
 };
 
 enum class AntiAimFakeType_y : int

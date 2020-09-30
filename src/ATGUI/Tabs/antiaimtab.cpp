@@ -21,6 +21,7 @@ static void RageAntiAIm()
         "Jitter",
 	"JitterSwitch",
 	"JitterRandom",
+	"Brainfuck Fake AA",
     };
 
 const char* lbyType[] = {
